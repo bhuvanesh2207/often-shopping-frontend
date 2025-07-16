@@ -15,7 +15,9 @@ import Profile from './pages/Profile';
 import ConfrimOrders from './pages/ConfrimOrders';
 import ViewOrders from './pages/ViewOrders';
 import OrderHistory from './pages/OrderHistory';
+import AddAddress from './pages/AddAddress';
 import './style.css'
+
 
 function App() {
   return (
@@ -37,6 +39,7 @@ function App() {
         <Route path="/confrim_order" element={<ConfrimOrders/>}/>
         <Route path="/view_orders" element={<ViewOrders/>} />
         <Route path="/order_history" element={<OrderHistory/>}/>
+        <Route path="/add_address" element = {<AddAddress/>} />
       </Routes>
     </BrowserRouter>
   );

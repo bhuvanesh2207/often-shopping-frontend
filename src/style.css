@@ -163,6 +163,72 @@ img {
   margin-left: auto;
 }
 
+/* --- Address Card Styles --- */
+.address-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+  /* justify-content: flex-start; cards start from left by default if unset */
+}
+
+.address-card {
+  background: white;
+  border-radius: 6px;
+  padding: 1rem;
+  min-width: 180px;
+  max-width: 240px;
+  border: 2px solid #999;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  margin-bottom: 0;
+}
+
+.address-card.selected {
+  border: 2px solid #2e86de;
+  background: #ecf6ff;
+}
+
+.address-card b {
+  font-size: 1.02rem;
+  color: #2e86de;
+  letter-spacing: 0.5px;
+}
+
+.address-card .remove-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.9rem;
+  margin-top: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.98rem;
+  transition: background 0.2s;
+}
+
+.address-card .remove-btn:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.address-card .remove-btn:hover:not(:disabled) {
+  background: #b03221;
+}
+
+@media (max-width: 800px) {
+  .address-list {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .address-card {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+/* --- End Address Card Styles --- */
+
 /* SEARCH DROPDOWN */
 ul {
   list-style: none;

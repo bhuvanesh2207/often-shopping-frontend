@@ -35,7 +35,7 @@ export default function ViewCart() {
 
   const handleDeleteCart = (id) => {
     axios
-      .get('http://localhost:8080/deleteCart', { params: { id } })
+      .get('http://localhost:8080/deleteCartItem', { params: { id } })
       .then(() => {
         alert('Deleted Successfully');
         fetchCart();
