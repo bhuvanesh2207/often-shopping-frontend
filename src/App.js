@@ -36,7 +36,7 @@ function App() {
         <Route path='/view_cart_page' element={<ViewCart/>}/>
         <Route path="/checkout" element={<Checkout/>}/>
         <Route path="/profile_page" element={<Profile/>}/>
-        <Route path="/confrim_order" element={<ConfrimOrders/>}/>
+        <Route path="/confirm_order" element={<ConfrimOrders/>}/>
         <Route path="/view_orders" element={<ViewOrders/>} />
         <Route path="/order_history" element={<OrderHistory/>}/>
         <Route path="/add_address" element = {<AddAddress/>} />

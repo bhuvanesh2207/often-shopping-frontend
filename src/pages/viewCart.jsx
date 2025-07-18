@@ -9,7 +9,7 @@ export default function ViewCart() {
   const [email] = useState(localStorage.getItem('email') || '');
   const [items, setItems] = useState([]);
   const navigate = useNavigate();
-
+  console.log("items:", JSON.stringify(items, null, 2));
   const fetchCart = async () => {
     try {
       const res = await axios.get('http://localhost:8080/viewCart', {
@@ -46,7 +46,7 @@ export default function ViewCart() {
   };
 
   const updateQuantity = (item, newQty) => {
-    if (newQty < 1) return; // prevent less than 1
+    if (newQty < 1) return;
 
     const payload = {
       email,
@@ -62,33 +62,35 @@ export default function ViewCart() {
 
   const total = calculateTotal(items);
 
+  const handleProceedToCheckout = () => {
+    if (!items.length) {
+      alert('Your cart is empty.');
+      return;
+    }
+    navigate('/checkout', { state: { total, items } });
+  };
+
   return (
-    <div>
-      <div className="container">
+    <div className="container">
       <h2>{email}'s Shopping Cart</h2>
-      {items.map(item => (
+      {items.map((item) => (
         <div key={item.productId} className="cart-item">
           <img src={item.productImage} alt={item.productName} />
-          <div className="cart-item-details">
+          <div>
             <h3>{item.productName}</h3>
-            <div className="cart-controls">
+            <div>
               <button onClick={() => updateQuantity(item, item.quantity + 1)}>+</button>
               {item.quantity}
               <button onClick={() => updateQuantity(item, item.quantity - 1)}>-</button>
             </div>
-            <p><strong>Subtotal:</strong> ₹{(item.price * item.quantity).toFixed(2)}</p>
+            <p>Subtotal: ₹{(item.price * item.quantity).toFixed(2)}</p>
           </div>
           <button onClick={() => handleDeleteCart(item.id)}>Delete</button>
         </div>
       ))}
-      <div className="cart-summary">Total: ₹{total.toFixed(2)}</div>
-      <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
-        <Link to="/customer_page"><button>Continue Shopping</button></Link>
-        <button onClick={() => navigate('/checkout',{state:{total}})} disabled={!items.length}>
-          Proceed to Checkout
-        </button>
-      </div>
-    </div>
+      <h3>Total: ₹{total.toFixed(2)}</h3>
+      <Link to="/customer_page"><button>Continue Shopping</button></Link>
+      <button onClick={handleProceedToCheckout}>Proceed to Checkout</button>
     </div>
   );
 }

@@ -4,7 +4,11 @@ import { useLocation, Link, useNavigate } from 'react-router-dom';
 
 export default function Checkout() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Read total and items from location state or fallback to localStorage!
   const totalAmount = Number(location.state?.total) || 0;
+  const items = location.state?.items || JSON.parse(localStorage.getItem('cart') || '[]');
 
   const [paymentMethod, setPaymentMethod] = useState("");
   const [addresses, setAddresses] = useState([]);
@@ -12,8 +16,6 @@ export default function Checkout() {
   const [addressLoading, setAddressLoading] = useState(true);
 
   const customerId = localStorage.getItem('id');
-  const email = localStorage.getItem('email');
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (customerId) {
@@ -21,70 +23,90 @@ export default function Checkout() {
       axios.get('http://localhost:8080/getAddress', {
         params: { customerId }
       })
-      .then(res => {
-        //Load all addresses 
-        const addressList = res.data;
-        //Save the addresses to state
-        setAddresses(addressList);
-
-        //select the first one by default
-        if (addressList.length > 0) {
-          const firstAddressId = addressList[0].id;
-          setSelectedAddressId(firstAddressId);
-        }
-      })
-      .catch(() => alert("Failed to fetch addresses!"))
-      .finally(() => setAddressLoading(false));
+        .then(res => {
+          setAddresses(res.data || []);
+          if (res.data.length > 0) {
+            setSelectedAddressId(res.data[0].id);
+          }
+        })
+        .catch(() => alert("Failed to fetch addresses!"))
+        .finally(() => setAddressLoading(false));
     }
   }, [customerId]);
 
+  // Remove address logic
+  const handleRemoveAddress = (id) => {
+    if (!window.confirm("Are you sure you want to remove this address?")) return;
 
-    // Remove a single address
-    const handleRemoveAddress = (id) => {
-      if (!window.confirm("Are you sure you want to remove this address?")) return;
-
-      axios.get('http://localhost:8080/removeAddress', {
-        params: { id }
-      })
+    axios.get('http://localhost:8080/removeAddress', { params: { id } })
       .then(() => {
         setAddresses(prev => {
-          const updatedAddresses = prev.filter(addr => addr.id !== id);
-          if (selectedAddressId === id) {
-            if (updatedAddresses.length > 0) {
-              setSelectedAddressId(updatedAddresses[0].id);
-            } else {
-              setSelectedAddressId("");
-            }
-          }
-          return updatedAddresses;
+          const updated = prev.filter(addr => addr.id !== id);
+          setSelectedAddressId(updated.length > 0 ? updated[0].id : "");
+          return updated;
         });
       })
       .catch(() => alert('Failed to remove address.'));
+  };
+
+  // Order creation and cart clear
+  const createOrder = async (paymentId) => {
+    const orderPayload = {
+      customerId,
+      address: selectedAddressId,
+      items: items.map(item => ({
+        productId: item.productId || null,
+        quantity: item.quantity || 1,
+      })),
+      totAmount: totalAmount,
+      ordertime: new Date().toISOString(),
+      paymentId,
     };
 
+    try {
+      await axios.post("http://localhost:8080/createOrder", orderPayload, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      // Remove cart ONLY after successful order!
+      localStorage.removeItem('cart');
+      alert("Order placed successfully!");
+      navigate("/confirm_order");
+    } catch (err) {
+      console.error("Order creation failed:", err);
+      alert("Order creation failed. Please try again.");
+    }
+  };
 
+  // Payment handler for COD and Online Payment
   const handlePayment = async () => {
     if (!selectedAddressId) {
-      alert("Please select a shipping address!");
+      alert("Please select an address.");
       return;
     }
     if (!paymentMethod) {
-      alert("Select the Payment Method");
+      alert("Please select a payment method.");
+      return;
+    }
+
+    // Cart empty check
+    if (!Array.isArray(items) || items.length === 0) {
+      alert("Cart is empty! Please add products before checkout.");
       return;
     }
 
     if (paymentMethod === "Cash On Delivery") {
-      navigate('/confrim_order');
+      await createOrder(null);
     } else if (paymentMethod === "Online Payment") {
       try {
-        const response = await axios.post(
+        const res = await axios.post(
           "http://localhost:8080/create-order",
           null,
           { params: { amount: totalAmount } }
         );
-        const order = response.data;
+        const order = res.data;
+
         if (!window.Razorpay) {
-          alert("Razorpay SDK not loaded. Please try again later.");
+          alert("Razorpay SDK not loaded.");
           return;
         }
 
@@ -92,37 +114,24 @@ export default function Checkout() {
           key: "rzp_test_dKctbPiOE97dPE",
           amount: order.amount,
           currency: "INR",
-          name: "OftenShopping",
-          description: "Order Payment",
+          name: "Your Store",
+          description: "Payment",
           order_id: order.id,
-          handler: function (response) {
-            axios.post("http://localhost:8080/savePayment", {
-              customerId,
-              email,
-              paymentId: response.razorpay_payment_id,
-              orderId: response.razorpay_order_id,
-              addressId: selectedAddressId,
-              amount: totalAmount,
-            })
-            .then(() => {
-              alert("Payment Successful.");
-              axios.get("http://localhost:8080/removeAfterPay", {
-                params: { customerId }
-              });
-              navigate('/confrim_order');
-            })
-            .catch(() => {
-              alert("Payment record save failed!");
-            });
-          }
+          handler: async function (response) {
+            // Payment successful, now create order, delete cart after
+            await createOrder(response.razorpay_payment_id);
+          },
+          prefill: {
+            email: localStorage.getItem('email') || '',
+          },
+          theme: { color: "#3399cc" },
         };
 
         const rzp = new window.Razorpay(options);
         rzp.open();
-
       } catch (error) {
-        console.error("Failed to create order:", error);
-        alert("Payment failed. Please try again.");
+        console.error("Online payment setup failed:", error);
+        alert("Payment process failed. Please try again.");
       }
     }
   };
@@ -132,68 +141,60 @@ export default function Checkout() {
       <h1>Checkout Page</h1>
       <h2>Total Amount: ₹{totalAmount.toFixed(2)}</h2>
       <Link to="/add_address"><button>Add Address</button></Link>
-      
+
       <h3>Select Shipping Address</h3>
-
-        {addressLoading ? (
-          <div>Loading addresses...</div>
-        ) : addresses.length === 0 ? (
-          <div>No saved addresses found.</div>
-        ) : (
-          <div className="address-list">
-            {addresses.map(addr => (
-              <div
-                key={addr.id}
-                className={`address-card${selectedAddressId === addr.id ? " selected" : ""}`}
-                onClick={() => setSelectedAddressId(addr.id)}
+      {addressLoading ? (
+        <p>Loading addresses...</p>
+      ) : addresses.length === 0 ? (
+        <p>No saved addresses.</p>
+      ) : (
+        <div>
+          {addresses.map(addr => (
+            <div
+              key={addr.id}
+              className={`address-card ${selectedAddressId === addr.id ? 'selected' : ''}`}
+              onClick={() => setSelectedAddressId(addr.id)}
+              style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0', cursor: 'pointer' }}
+            >
+              <div><b>{addr.fullName}</b></div>
+              <div>{addr.street}, {addr.city}</div>
+              <div>{addr.state} - {addr.pincode}</div>
+              <div>Phone: {addr.phone}</div>
+              <button
+                onClick={e => { e.stopPropagation(); handleRemoveAddress(addr.id); }}
+                disabled={addressLoading}
               >
-                <div><b>{addr.fullName}</b></div>
-                <div>{addr.street}, {addr.city}</div>
-                <div>{addr.state} - {addr.pincode}</div>
-                <div>Phone: {addr.phone}</div>
-                <button
-                  className="remove-btn"
-                  onClick={e => { e.stopPropagation(); handleRemoveAddress(addr.id); }}
-                  disabled={addressLoading}
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
-
-
-      <form onSubmit={e => { e.preventDefault(); handlePayment(); }}>
+      <form onSubmit={(e) => { e.preventDefault(); handlePayment(); }}>
         <h3>Payment Method</h3>
         <label>
           <input
             type="radio"
-            name="paymentMethod"
+            name="payment"
             value="Cash On Delivery"
             checked={paymentMethod === "Cash On Delivery"}
             onChange={e => setPaymentMethod(e.target.value)}
-          />
-          Cash On Delivery
+          /> Cash On Delivery
         </label>
         <br />
         <label>
           <input
             type="radio"
-            name="paymentMethod"
+            name="payment"
             value="Online Payment"
             checked={paymentMethod === "Online Payment"}
             onChange={e => setPaymentMethod(e.target.value)}
-          />
-          Online Payment
+          /> Online Payment
         </label>
         <br />
-        <button
-          type="submit"
-          disabled={totalAmount === 0 || addresses.length === 0}
-        >
-          Make Payment
+        <button type="submit" disabled={totalAmount === 0 || addresses.length === 0}>
+          Place Order
         </button>
       </form>
 
