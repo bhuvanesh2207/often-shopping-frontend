@@ -2,97 +2,125 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 export default function AdminSignup() {
-  // Separate state variables for each field
-  const [businessName, setBusinessName] = useState("");
-  const [businessType, setBusinessType] = useState("");
-  const [gstNumber, setGstNumber] = useState("");
-  const [panNumber, setPanNumber] = useState("");
-  const [companyEmail, setCompanyEmail] = useState("");
-  const [businessAddress, setBusinessAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [pincode, setPincode] = useState("");
-  const [documentPath, setDocumentPath] = useState("");
+  const [step, setStep] = useState(1);
 
+  // Form state
+  const [formData, setFormData] = useState({
+    businessName: "",
+    businessType: "",
+    gstNumber: "",
+    panNumber: "",
+    companyEmail: "",
+    businessAddress: "",
+    city: "",
+    state: "",
+    pincode: "",
+    documentPath: ""
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Collect all variables into `data` before sending
-    const data = {
-      businessName,
-      businessType,
-      gstNumber,
-      panNumber,
-      companyEmail,
-      businessAddress,
-      city,
-      state,
-      pincode,
-      documentPath
-    };
-
-    axios.post("http://localhost:8080/adminSignup", data)
+    axios.post("http://localhost:8080/adminSignup", formData)
       .then(res => {
-        alert("SignUp Successful check mail for Futher Details");
-
+        alert("SignUp Successful. Check mail for further details.");
         if (res.data && res.data.adminId) {
-      const admindetails = localStorage.setItem('adminId', res.data.adminId);
-      console.log(admindetails)
-    }
-
+          localStorage.setItem('adminId', res.data.adminId);
+        }
       })
-      .catch(err => {
-        alert("Error Occurred");
-      });
+      .catch(() => alert("Error Occurred"));
   };
 
+  const nextStep = () => {
+    let valid = true;
+
+    // Validate fields based on the current step
+    if (step === 1) {
+      if (!formData.businessName.trim() || !formData.businessType.trim()) valid = false;
+    } else if (step === 2) {
+      if (!formData.gstNumber.trim() || !formData.panNumber.trim()) valid = false;
+    } else if (step === 3) {
+      if (!formData.companyEmail.trim() || !formData.businessAddress.trim()) valid = false;
+    } else if (step === 4) {
+      if (!formData.city.trim() || !formData.state.trim() || !formData.pincode.trim()) valid = false;
+    }
+
+    if (!valid) {
+      alert("Please fill in all required fields before proceeding.");
+      return;
+    }
+
+    setStep(prev => prev + 1);
+  };
+
+  const prevStep = () => setStep(prev => prev - 1);
+
   return (
-    <>
+    <div className="form-container">
       <h2>Admin Signup</h2>
-      <form onSubmit={handleSubmit} method="post">
+      <form onSubmit={handleSubmit}>
+        {step === 1 && (
+          <>
+            <label>Business Name:</label>
+            <input type="text" name="businessName" value={formData.businessName} onChange={handleChange} required />
+            <label>Business Type:</label>
+            <input type="text" name="businessType" value={formData.businessType} onChange={handleChange} required />
+          </>
+        )}
 
-        <label htmlFor="businessName">Business Name:</label><br />
-        <input type="text" id="businessName" name="businessName" required value={businessName} onChange={(e) => setBusinessName(e.target.value)} /><br /><br />
+        {step === 2 && (
+          <>
+            <label>GST Number:</label>
+            <input type="text" name="gstNumber" value={formData.gstNumber} onChange={handleChange} required />
+            <label>PAN Number:</label>
+            <input type="text" name="panNumber" value={formData.panNumber} onChange={handleChange} required />
+          </>
+        )}
 
-        <label htmlFor="businessType">Business Type:</label><br />
-        <input type="text" id="businessType" name="businessType" required value={businessType} onChange={(e) => setBusinessType(e.target.value)} /><br /><br />
+        {step === 3 && (
+          <>
+            <label>Company Email:</label>
+            <input type="email" name="companyEmail" value={formData.companyEmail} onChange={handleChange} required />
+            <label>Business Address:</label>
+            <input type="text" name="businessAddress" value={formData.businessAddress} onChange={handleChange} required />
+          </>
+        )}
 
-        <label htmlFor="gstNumber">GST Number:</label><br />
-        <input type="text" id="gstNumber" name="gstNumber" required value={gstNumber} onChange={(e) => setGstNumber(e.target.value)} /><br /><br />
+        {step === 4 && (
+          <>
+            <label>City:</label>
+            <input type="text" name="city" value={formData.city} onChange={handleChange} required />
+            <label>State:</label>
+            <input type="text" name="state" value={formData.state} onChange={handleChange} required />
+            <label>Pincode:</label>
+            <input type="text" name="pincode" value={formData.pincode} onChange={handleChange} required />
+          </>
+        )}
 
-        <label htmlFor="panNumber">PAN Number:</label><br />
-        <input type="text" id="panNumber" name="panNumber" required value={panNumber} onChange={(e) => setPanNumber(e.target.value)} /><br /><br />
+        {step === 5 && (
+          <>
+            <p>
+              Please upload a PDF containing the following business documents:
+              <li>GST Certificate</li>
+              <li>PAN Card</li>
+              <li>Company Registration Document</li>
+            </p>
+            <br />
+            <label>Document Link/Path:</label>
+            <input type="text" name="documentPath" value={formData.documentPath} onChange={handleChange} required />
+          </>
+        )}
 
-        <label htmlFor="companyEmail">Company Email:</label><br />
-        <input type="email" id="companyEmail" name="companyEmail" required value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} /><br /><br />
-
-        <label htmlFor="businessAddress">Business Address:</label><br />
-        <input type="text" id="businessAddress" name="businessAddress" required value={businessAddress} onChange={(e) => setBusinessAddress(e.target.value)} /><br /><br />
-
-        <label htmlFor="city">City:</label><br />
-        <input type="text" id="city" name="city" required value={city} onChange={(e) => setCity(e.target.value)} /><br /><br />
-
-        <label htmlFor="state">State:</label><br />
-        <input type="text" id="state" name="state" required value={state} onChange={(e) => setState(e.target.value)} /><br /><br />
-
-        <label htmlFor="pincode">Pincode:</label><br />
-        <input type="text" id="pincode" name="pincode" required value={pincode} onChange={(e) => setPincode(e.target.value)} /><br /><br />
-
-        <p>
-          Please upload a PDF containing the following business documents:
-          <ul>
-            <li>GST Certificate</li>
-            <li>PAN Card</li>
-            <li>Company Registration Document</li>
-          </ul>
-          Provide the link or path on below section.
-        </p> <br></br> <br></br>
-        <label htmlFor="documentPath">Document Link/Path:</label><br />
-        <input type="text" id="documentPath" name="documentPath" required value={documentPath} onChange={(e) => setDocumentPath(e.target.value)} /><br /><br />
-
-        <input type="submit" value="SIGN UP" />
+        {/* Navigation Buttons */}
+        <div style={{ marginTop: "20px" }}>
+          {step > 1 && <button type="button" onClick={prevStep}>Previous</button>}
+          {step < 5 && <button type="button" onClick={nextStep}>Next</button>}
+          {step === 5 && <button type="submit">SIGN UP</button>}
+        </div>
       </form>
-    </>
+    </div>
   );
 }

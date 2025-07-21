@@ -34,6 +34,7 @@ export default function CustomerSignup() {
 
   return (
     <>
+    
       <form onSubmit={handleSubmit}>
         <h2>Customer Signup Form</h2>
 

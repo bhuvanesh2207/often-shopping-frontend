@@ -1,111 +1,129 @@
-  // src/pages/Customer.jsx
-  import React, { useState, useEffect } from 'react';
-  import axios from 'axios';
-  import { useNavigate } from 'react-router-dom';
-  import {Link} from 'react-router-dom';
+// src/pages/Customer.jsx
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import CustomerNavbar from './CustomerNavbar';
 
-  export default function Customer() {
-    const [email, setEmail] = useState('');
-    const [products, setProducts] = useState([]);
-    const [quantities, setQuantities] = useState({});
-    const [results, setResults] = useState([]);
-    const [query, setQuery] = useState('');
-    const navigate = useNavigate();
+export default function Customer() {
+  const [email, setEmail] = useState('');
+  const [products, setProducts] = useState([]);
+  const [quantities, setQuantities] = useState({});
+  const [results, setResults] = useState([]);
+  const [query, setQuery] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const passedKeyword = location.state?.keyword || '';
 
-    useEffect(() => {
-      const storedEmail = localStorage.getItem('email') || '';
-      setEmail(storedEmail);
-      fetchProducts();
-    }, []);
+  useEffect(() => {
+    const storedEmail = localStorage.getItem('email') || '';
+    setEmail(storedEmail);
+    fetchProducts();
 
-    const fetchProducts = () => {
-      axios
-        .get('http://localhost:8080/viewAllProducts')
-        .then(res => {
-          setProducts(res.data);
-          const q = {};
-          res.data.forEach(p => (q[p.id] = 1));
-          setQuantities(q);
-        })
-        .catch(err => console.error('Failed to fetch products:', err));
+    if (passedKeyword) {
+      setQuery(passedKeyword);
+      searchKeyword(passedKeyword);
+      setShowSuggestions(false); // Disable dropdown if keyword is from homepage
+    }
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get('http://localhost:8080/viewAllProducts');
+      setProducts(res.data);
+      const q = {};
+      res.data.forEach((p) => (q[p.id] = 1));
+      setQuantities(q);
+    } catch (err) {
+      console.error('Failed to fetch products:', err);
+    }
+  };
+
+  const handleQuantityChange = (pid, val) => {
+    const v = Math.max(1, parseInt(val, 10) || 1);
+    setQuantities((prev) => ({ ...prev, [pid]: v }));
+  };
+
+  const handleCart = async (prod) => {
+    const payload = {
+      customerEmail: email,
+      productId: prod.id,
+      quantity: quantities[prod.id] || 1,
     };
 
-    const handleQuantityChange = (pid, val) => {
-      const v = Math.max(1, parseInt(val, 10) || 1);
-      setQuantities(q => ({ ...q, [pid]: v }));
-    };
+    try {
+      await axios.post('http://localhost:8080/addToCart', payload);
+      alert('Added to cart!');
+    } catch (err) {
+      console.error('Add to cart failed:', err);
+      alert('Failed to add to cart.');
+    }
+  };
 
-    const handleCart = (prod) => {
-      const payload = {
-        customerEmail: email,
-        productId: prod.id,
-        quantity: quantities[prod.id] || 1,
-      };
+  const searchKeyword = async (keyword) => {
+    try {
+      const res = await axios.get('http://localhost:8080/searchProduct', {
+        params: { keyword },
+      });
+      setResults(res.data);
+    } catch (err) {
+      console.error('Search failed:', err);
+    }
+  };
 
-      axios
-        .post('http://localhost:8080/addToCart', payload)
-        .then(() => alert('Added to cart!'))
-        .catch(err => {
-          console.error('Add to cart failed:', err);
-          alert("Failed to add to cart. See console for details.");
-        });
-    };
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
 
-    const handleInputChange = async (e) => {
-  const value = e.target.value;
-  setQuery(value);
+    if (value.trim().length === 0) {
+      setResults([]);
+      setShowSuggestions(false);
+      return;
+    }
 
-  if (value.trim().length === 0) {
+    setShowSuggestions(true);
+    searchKeyword(value);
+  };
+
+  const handleSelect = (product) => {
+    setQuery(product.productName);
     setResults([]);
-    return;
-  }
+    setShowSuggestions(false);
+  };
 
-  try {
-    const res = await axios.get("http://localhost:8080/searchProduct", {
-      params: { keyword: value }
-    });
-    setResults(res.data);
-  } catch (err) {
-    console.error("Search failed:", err);
-  }
-};
+  const displayedProducts = query.length > 0 ? results : products;
 
-const handleSelect = (product) => {
-  setQuery(product.productName);
-  setResults([]); // Hide dropdown after selection
-  setResults([product]); // Show only selected product in list (optional)
-};
-
-
-    const displayedProducts = query.length > 0 ? results : products;
-
-    return (
+  return (
+    <div>
+      <CustomerNavbar />
+      <h2>Welcome {email}</h2>
       <div>
-        <h2>Welcome {email}</h2>
         <button onClick={() => navigate('/view_cart_page')}>View Cart</button>
-        <Link to="/profile_page"><button>Profile</button></Link>
-        <div>
-          <input
-            type="text"
-            placeholder="Search products..."
-            value={query}
-            onChange={handleInputChange}
-          />
+        <Link to="/profile_page">
+          <button>Profile</button>
+        </Link>
+      </div>
 
-          {/* Show dropdown only if results are available */}
-          {results.length > 0 && (
-            <ul>
-              {results.map((p) => (
-                <div key={p.id} onClick={() => handleSelect(p)}>
-                  {p.productName} - {p.brand}
-                </div>
-              ))}
-            </ul>
-          )}
-        </div>
+      <div>
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={query}
+          onChange={handleInputChange}
+        />
+        {results.length > 0 && showSuggestions && (
+          <ul>
+            {results.map((p) => (
+              <li key={p.id} onClick={() => handleSelect(p)}>
+                {p.productName} - {p.brand}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
-        <div className="product-list">
-        {displayedProducts.map(p => (
+      <div className="product-list">
+        {displayedProducts.map((p) => (
           <div className="product-card" key={p.id}>
             <div className="product-image">
               <img src={p.productImage} alt={p.productName} width="150" />
@@ -135,6 +153,6 @@ const handleSelect = (product) => {
           </div>
         ))}
       </div>
-      </div>
-    );
-  }
+    </div>
+  );
+}

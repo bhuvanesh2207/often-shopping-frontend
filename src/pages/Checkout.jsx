@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
+ import CustomerNavbar from './CustomerNavbar';
 
 export default function Checkout() {
   const location = useLocation();
@@ -138,6 +139,7 @@ export default function Checkout() {
 
   return (
     <div>
+      <CustomerNavbar/>
       <h1>Checkout Page</h1>
       <h2>Total Amount: ₹{totalAmount.toFixed(2)}</h2>
       <Link to="/add_address"><button>Add Address</button></Link>

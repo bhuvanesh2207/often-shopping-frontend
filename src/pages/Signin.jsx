@@ -27,6 +27,7 @@ export default function Signin() {
           navigate("/customer_page");
         } else {
           alert('Unknown role received: ' + role);
+          console.log(role)
         }
       })
       .catch(err => {
@@ -35,9 +36,11 @@ export default function Signin() {
   }
 
   return (
-    <>
-      <form onSubmit={handleSubmit} method="post">
-        <label htmlFor="email">Email:</label><br />
+    <div className="auth-container">
+      <form className="auth-form" onSubmit={handleSubmit} method="post">
+        <h2>Sign In</h2>
+        
+        <label htmlFor="email">Email:</label>
         <input
           type="email"
           id="email"
@@ -45,9 +48,9 @@ export default function Signin() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-        /><br /><br />
+        />
 
-        <label htmlFor="password">Password:</label><br />
+        <label htmlFor="password">Password:</label>
         <input
           type="password"
           id="password"
@@ -55,10 +58,10 @@ export default function Signin() {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-        /><br /><br />
+        />
 
-        <input type="submit" value="SIGN In" />
+        <button type="submit" className="auth-button">SIGN IN</button>
       </form>
-    </>
+    </div>
   );
 }

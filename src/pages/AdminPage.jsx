@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import AdminNavbar from "./AdminNavbar";
 
 function ProductTable() {
   const [products, setProducts] = useState([]);
@@ -51,6 +52,7 @@ function ProductTable() {
 
   return (
     <>
+        <AdminNavbar/>
       <h1>Admin Products Page</h1>
       <Link to="/changePassword_page"><button>Set New / Change Password</button></Link><br />
       <Link to="/add_product"><button>Add Products</button></Link>

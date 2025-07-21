@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import AdminNavbar from "./AdminNavbar";
+
 
 export default function AddProduct() {
   const [productName, setProductName] = useState('');
@@ -66,7 +68,9 @@ export default function AddProduct() {
   };
 
   return (
+    
     <div className="product-form">
+    <AdminNavbar/>
       <h2>Add New Product</h2>
       <form onSubmit={handleSubmit}>
         <label>

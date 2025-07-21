@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import AdminNavbar from "./AdminNavbar";
 
 export default function ChangePassword() {
   const [email, setEmail] = useState('');
@@ -60,6 +61,7 @@ export default function ChangePassword() {
 
   return (
     <div>
+      <AdminNavbar/>
       <h2>Change Password</h2>
 
       {step === 1 && (
