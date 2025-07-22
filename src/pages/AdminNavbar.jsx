@@ -10,7 +10,7 @@ export default function AdminNavbar() {
       <Link to="/admin_profile_page" className="profile-link">
         <button className="profile-button">
           <img
-            src="https://via.placeholder.com/45"
+            src="https://www.pngmart.com/files/21/Admin-Profile-Vector-PNG-Photos.png"
             alt="Profile"
             className="profile-image"
           />
