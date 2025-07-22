@@ -7,6 +7,7 @@ export default function CustomerNavbar() {
   <div className="nav-links">
     <Link to="/">Home</Link>
     <Link to="/view_cart_page">Cart</Link>
+    <Link to="/customer_page">Shopp</Link>
     <Link to="/view_orders">My Orders</Link>
     <Link to="/logout">Logout</Link>
   </div>

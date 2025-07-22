@@ -72,60 +72,53 @@ export default function ViewCart() {
   };
 
   return (
-    <div className="container">
-      <CustomerNavbar/>
-      <h2>{email}'s Shopping Cart</h2>
-      {items.map((item) => (
-        <div key={item.productId} className="cart-item">
-          <div className="cart-img-name">
+    <div className="cart-wrapper">
+      <CustomerNavbar />
+      <div className="cart-container">
+        <h2>{email}'s Shopping Cart</h2>
+
+        {items.length === 0 ? (
+          <div className="empty-cart">
             <img
-              src={item.productImage || 'https://via.placeholder.com/120'}
-              alt={item.productName}
-              className="product-image"
+              src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png"
+              alt="Empty Cart"
             />
+            <h3>Your cart is empty</h3>
           </div>
-
-          <div className="cart-details">
-            <Link to={`/product/${item.productId}`} className="product-name">
-              {item.productName}
-            </Link>
-            {/* Feel free to add product-description lines here */}
-            {/* <p className="product-description">In Stock</p> */}
-            {/* <p className="product-description">Color: Black</p> */}
-
-            <div className="quantity-controls">
-              <button onClick={() => updateQuantity(item, item.quantity - 1)}>-</button>
-              <span>{item.quantity}</span>
-              <button onClick={() => updateQuantity(item, item.quantity + 1)}>+</button>
-            </div>
-
+        ) : (
+          <>
+            {items.map((item) => (
+              <div key={item.productId} className="cart-item">
+                <img src={item.productImage} alt={item.productName} />
+                <div className="cart-details">
+                  <Link to={`/product/${item.productId}`} className="product-name">
+                    {item.productName}
+                  </Link>
+                  <div className="quantity-controls">
+                    <button onClick={() => updateQuantity(item, item.quantity - 1)}>-</button>
+                    <span>{item.quantity}</span>
+                    <button onClick={() => updateQuantity(item, item.quantity + 1)}>+</button>
+                  </div>
+                  <button className="delete-button" onClick={() => handleDeleteCart(item.id)}>
+                    Delete
+                  </button>
+                </div>
+                <div className="product-price">
+                  ₹{(item.price * item.quantity).toFixed(2)}
+                </div>
+              </div>
+            ))}
+            <h3 className="cart-subtotal">Total: ₹{total.toFixed(2)}</h3>
             <div className="cart-actions">
-              {/* Using anchor tag styled links for actions */}
-              <button
-                className="delete-link" 
-                onClick={() => handleDeleteCart(item.id)}
-                style={{background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#007185'}}
-              >
-                Delete
-              </button>
-              {/* Add other actions like save for later/compare if you want */}
+              <Link to="/customer_page">
+                <button>Continue Shopping</button>
+              </Link>
+              <button onClick={handleProceedToCheckout}>Proceed to Checkout</button>
             </div>
-          </div>
-
-          <div className="product-price">
-            ₹{(item.price * item.quantity).toFixed(2)}
-          </div>
-        </div>
-      ))}
-
-      <h3 className="cart-subtotal-summary">
-        Total: <strong>₹{total.toFixed(2)}</strong>
-      </h3>
-
-      <Link to="/customer_page">
-        <button>Continue Shopping</button>
-      </Link>
-      <button onClick={handleProceedToCheckout}>Proceed to Checkout</button>
+          </>
+        )}
+      </div>
     </div>
+
   );
 }
