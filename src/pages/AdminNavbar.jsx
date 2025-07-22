@@ -7,7 +7,15 @@ export default function AdminNavbar() {
       <Link to="/admin_page" >Dashboard</Link>
       <Link to="/add_product" >Manage Products</Link>
       <Link to="/changePassword_page" >Change Password</Link>
-      <Link to="/" >Logout</Link>
+      <Link to="/admin_profile_page" className="profile-link">
+        <button className="profile-button">
+          <img
+            src="https://via.placeholder.com/45"
+            alt="Profile"
+            className="profile-image"
+          />
+        </button>
+      </Link>
     </nav>
   );
 }

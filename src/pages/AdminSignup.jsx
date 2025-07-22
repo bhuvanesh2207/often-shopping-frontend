@@ -36,8 +36,6 @@ export default function AdminSignup() {
 
   const nextStep = () => {
     let valid = true;
-
-    // Validate fields based on the current step
     if (step === 1) {
       if (!formData.businessName.trim() || !formData.businessType.trim()) valid = false;
     } else if (step === 2) {
@@ -47,21 +45,20 @@ export default function AdminSignup() {
     } else if (step === 4) {
       if (!formData.city.trim() || !formData.state.trim() || !formData.pincode.trim()) valid = false;
     }
-
     if (!valid) {
       alert("Please fill in all required fields before proceeding.");
       return;
     }
-
     setStep(prev => prev + 1);
   };
 
   const prevStep = () => setStep(prev => prev - 1);
 
   return (
-    <div className="form-container">
-      <h2>Admin Signup</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="auth-container">
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <h2>Admin Signup</h2>
+
         {step === 1 && (
           <>
             <label>Business Name:</label>
@@ -116,9 +113,9 @@ export default function AdminSignup() {
 
         {/* Navigation Buttons */}
         <div style={{ marginTop: "20px" }}>
-          {step > 1 && <button type="button" onClick={prevStep}>Previous</button>}
-          {step < 5 && <button type="button" onClick={nextStep}>Next</button>}
-          {step === 5 && <button type="submit">SIGN UP</button>}
+          {step > 1 && <button type="button" className="auth-button" onClick={prevStep}>Previous</button>}
+          {step < 5 && <button type="button" className="auth-button" onClick={nextStep}>Next</button>}
+          {step === 5 && <button type="submit" className="auth-button">SIGN UP</button>}
         </div>
       </form>
     </div>

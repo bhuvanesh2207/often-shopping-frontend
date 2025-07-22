@@ -10,7 +10,7 @@ const heroSlides = [
   {
     title: "Electronics Sale",
     subtitle: "Best Deals of the Month",
-    bg: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=compress&cs=tinysrgb&w=1280",
+    bg: "https://wallpaperaccess.com/full/6424708.jpg",
   },
   {
     title: "Home & Kitchen",
@@ -18,9 +18,9 @@ const heroSlides = [
     bg: "https://www.appliancehero.co.uk/_next/image?url=https:%2F%2Fwww.wp.appliancehero.pomeg.dev%2Fwp-content%2Fuploads%2F2023%2F11%2Fimage-3-edited-1-1-scaled.jpg&w=1080&q=75",
   },
   {
-    title: "Home & Kitchen",
-    subtitle: "Stylize Your Space",
-    bg: "https://tse2.mm.bing.net/th/id/OIP.PkP8hyF6e0IzuzoA-impKgHaDF?pid=Api&P=0&h=180",
+    title: "Shoes & Sandles",
+    subtitle: "Step Into Style and Comfort",
+    bg: "https://wallpaperaccess.com/full/1597755.jpg",
   }
 ];
 
@@ -55,16 +55,18 @@ export default function Home() {
         </div>
 
         <nav className="navigation">
-          <div className="nav-item">All</div>
           <div className="nav-item">
             <Link to="/admin_sell" className="nav-link">Sell</Link>
           </div>
-          <div className="nav-item">Customer Service</div>
+          <div className="nav-item">
+            <Link to="/customer_service" className="nav-link">Customer Service</Link>
+          </div>
           <div className="nav-buttons">
             <Link to="/customer_signup" className="nav-btn">Sign Up</Link>
             <Link to="/signin" className="nav-btn">Sign In</Link>
           </div>
         </nav>
+
       </header>
 
       {/* Hero Section */}

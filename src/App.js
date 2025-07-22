@@ -11,7 +11,8 @@ import AddProduct from './pages/AddProduct';
 import UpdateProduct from './pages/UpdateProduct';
 import ViewCart from './pages/viewCart';
 import Checkout from './pages/Checkout';
-import Profile from './pages/Profile';
+import CustomerProfile from './pages/CustomerProfile';
+import AdminProfile from './pages/AdminProfile';
 import ConfrimOrders from './pages/ConfrimOrders';
 import ViewOrders from './pages/ViewOrders';
 import OrderHistory from './pages/OrderHistory';
@@ -20,6 +21,7 @@ import AdminSell from './pages/AdminSell';
 import Footer from './pages/Footer';
 import AdminNavbar from './pages/AdminNavbar';
 import CustomerNavbar from './pages/CustomerNavbar';
+import CustomerService from './pages/CustomerService';
 import './style.css'
 function App() {
   return (
@@ -37,13 +39,15 @@ function App() {
         <Route path="/update_product" element={<UpdateProduct/>}/>
         <Route path='/view_cart_page' element={<ViewCart/>}/>
         <Route path="/checkout" element={<Checkout/>}/>
-        <Route path="/profile_page" element={<Profile/>}/>
+        <Route path="/customer_profile_page" element={<CustomerProfile/>}/>
+        <Route path="/admin_profile_page" element={<AdminProfile/>}/>
         <Route path="/confirm_order" element={<ConfrimOrders/>}/>
         <Route path="/view_orders" element={<ViewOrders/>} />
         <Route path="/order_history" element={<OrderHistory/>}/>
         <Route path="/add_address" element = {<AddAddress/>} />
         <Route path="/admin_sell" element = {<AdminSell/>} />
-        <Route path="/adminNavbar" element={<AdminNavbar/>}></Route>
+        <Route path="/adminNavbar" element={<AdminNavbar/>}/>
+        <Route path="/customer_service" element={<CustomerService/>}/>
         <Route element={<CustomerNavbar/>}/>
       </Routes>
 

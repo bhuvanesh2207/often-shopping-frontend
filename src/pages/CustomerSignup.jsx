@@ -8,37 +8,35 @@ export default function CustomerSignup() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+  // Prevent submit if any fields are empty
+  const requiredFieldsMissing = !name || !email || !password;
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Prepare the data to be sent
     const data = { name, email, password };
 
-    // Send the data to the backend
     axios
       .post("http://localhost:8080/customerSignup", data, {
         headers: {
-          'Content-Type': 'application/json', // Ensure Content-Type is application/json
+          'Content-Type': 'application/json',
         },
       })
       .then((res) => {
-        // On success, navigate to the login page
         navigate("/signin");
       })
       .catch((err) => {
-        // Handle error and show an alert
         console.error("Error:", err);
         alert("An error occurred while signing up. Please try again.");
       });
   };
 
   return (
-    <>
-    
-      <form onSubmit={handleSubmit}>
+    <div className="auth-container">
+      <form className="auth-form" onSubmit={handleSubmit}>
         <h2>Customer Signup Form</h2>
 
-        <label htmlFor="name">Name:</label><br />
+        <label htmlFor="name">Name:</label>
         <input
           type="text"
           id="name"
@@ -46,9 +44,9 @@ export default function CustomerSignup() {
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-        /><br /><br />
+        />
 
-        <label htmlFor="email">Email:</label><br />
+        <label htmlFor="email">Email:</label>
         <input
           type="email"
           id="email"
@@ -56,9 +54,9 @@ export default function CustomerSignup() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-        /><br /><br />
+        />
 
-        <label htmlFor="password">Password:</label><br />
+        <label htmlFor="password">Password:</label>
         <input
           type="password"
           id="password"
@@ -66,10 +64,16 @@ export default function CustomerSignup() {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-        /><br /><br />
+        />
 
-        <input type="submit" value="SIGN UP" />
+        <button
+          type="submit"
+          className="auth-button"
+          disabled={requiredFieldsMissing}
+        >
+          SIGN UP
+        </button>
       </form>
-    </>
+    </div>
   );
 }
