@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
+import '../styles/Navbar.css'
 const heroSlides = [
   {
     title: "Gaming Store",
@@ -54,18 +54,23 @@ export default function Home() {
           </div>
         </div>
 
-        <nav className="navigation">
-          <div className="nav-item">
-            <Link to="/admin_sell" className="nav-link">Sell</Link>
-          </div>
-          <div className="nav-item">
-            <Link to="/customer_service" className="nav-link">Customer Service</Link>
-          </div>
-          <div className="nav-buttons">
-            <Link to="/customer_signup" className="nav-btn">Sign Up</Link>
-            <Link to="/signin" className="nav-btn">Sign In</Link>
-          </div>
-        </nav>
+       
+      
+    <nav className="navigation">
+      {/* Left-side navigation links */}
+      <div className="nav-links">
+        <Link to="/admin_sell" className="nav-item">Sell</Link>
+        <Link to="/customer_service" className="nav-item">Customer Service</Link>
+        <Link to="/join_delivery" className="nav-item">Join Delivery</Link>
+      </div>
+
+      {/* Right-side buttons and profile */}
+      <div className="nav-buttons">
+        <Link to="/customer_signup" className="nav-btn">Sign Up</Link>
+        <Link to="/signin" className="nav-btn">Sign In</Link>
+      </div>
+    </nav>
+
 
       </header>
 

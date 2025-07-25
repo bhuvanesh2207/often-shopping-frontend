@@ -1402,7 +1402,7 @@ button.add-to-cart-btn:hover:not(:disabled) {
 .footer-links a {
   margin: 0 10px;
   text-decoration: none;
-  color: #333;
+  color: #333;  
   transition: color 0.3s;
 }
 

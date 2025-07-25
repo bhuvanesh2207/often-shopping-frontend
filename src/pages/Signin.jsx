@@ -24,9 +24,11 @@ export default function Signin() {
         if (role === "admin") {
           navigate("/admin_page");
         } else if (role === "customer") {
-          navigate("/customer_page");
-        } else {
-          alert('Unknown role received: ' + role);
+          navigate("/customer_page"); 
+        } else if( role === "delivery") {
+          navigate("/delivery_page");
+        }else {
+          alert('Invalid input received: ' + role);
           console.log(role)
         }
       })

@@ -1,0 +1,105 @@
+/* ============ NAVBAR (Updated Layout with Smooth Hover) ============ */
+.navigation {
+  display: flex;
+  justify-content: space-between; /* Text left, profile right */
+  align-items: center;
+  height: 60px;
+  background-color: #3a4759; /* Softer than #232f3e */
+  font-size: 15px;
+  padding: 0 2rem;
+  position: relative;
+}
+
+/* Nav links group */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+/* Nav links (Sell, Customer Service, etc.) */
+.nav-links a {
+  color: #f08804;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 6px 12px;
+  border: 1.5px solid transparent; /* Invisible border initially */
+  border-radius: 4px;
+  transition: border 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nav-links a:hover {
+  border-color: #f08804; /* Orange border on hover */
+  color: white;
+  background-color: transparent;
+}
+
+/* Extra nav-item if used */
+.nav-item {
+  color: white;
+  cursor: pointer;
+  padding: 8px 14px;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ============ Profile Icon ============ */
+.profile-link {
+  display: flex;
+  align-items: center;
+}
+
+.profile-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-image {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  object-fit: cover;
+  display: block;
+}
+
+/* ============ NAVBAR BUTTONS (Sign In / Sign Up) ============ */
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-btn {
+  background-color: #f08804;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, 
+              color 0.3s ease, 
+              border 0.3s ease, 
+              transform 0.2s ease;
+}
+
+.nav-btn:hover {
+  background-color: white;
+  color: #f08804;
+  border: 1.5px solid #f08804;
+  transform: scale(1.05); /* Slight zoom effect */
+}

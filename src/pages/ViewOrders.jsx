@@ -95,6 +95,7 @@ export default function ViewOrders() {
             <p><strong>Order Time:</strong> {new Date(order.ordertime).toLocaleString()}</p>
             <p><strong>Payment ID:</strong> {order.paymentId || "Cash On Delivery"}</p>
             <p><strong>Total Amount:</strong> ₹{order.totAmount?.toFixed(2)}</p>
+             <p><strong>Status:</strong> {order.status}</p>
             {order.address && (
               <p><strong>Address:</strong> {[order.address.street, order.address.city, order.address.state, order.address.pincode].filter(Boolean).join(', ')}</p>
             )}
