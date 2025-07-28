@@ -9,6 +9,7 @@ export default function Customer() {
   const [products, setProducts] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [results, setResults] = useState([]);
+  const [avgRatings, setAvgRatings] = useState({});
   const [query, setQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(true);
   const navigate = useNavigate();
@@ -23,19 +24,50 @@ export default function Customer() {
     if (passedKeyword) {
       setQuery(passedKeyword);
       searchKeyword(passedKeyword);
-      setShowSuggestions(false); // Disable dropdown if keyword is from homepage
+      setShowSuggestions(false);
     }
   }, []);
 
-  const fetchProducts = async () => {
+ const fetchProducts = async () => {
+  try {
+    const res = await axios.get('http://localhost:8080/viewAllProducts');
+
+    // Calculate final price for each product
+    const productsWithFinalPrice = res.data.map(p => ({
+      ...p,
+      finalPrice: Number(
+        (p.price * (1 - (p.discount || 0) / 100)).toFixed(2)
+      ),
+    }));
+    setProducts(productsWithFinalPrice);
+
+    // Set default quantity = 1 for each product
+    const q = {};
+    productsWithFinalPrice.forEach(p => (q[p.id] = 1));
+    setQuantities(q);
+
+    // Fetch average ratings
+    const avgObj = {};
+    for (let p of productsWithFinalPrice) {
+      const avg = await fetchAvgRating(p.id);
+      avgObj[p.id] = avg;
+    }
+    setAvgRatings(avgObj);
+
+  } catch (err) {
+    console.error('Failed to fetch products:', err);
+  }
+};
+
+  const fetchAvgRating = async (productId) => {
     try {
-      const res = await axios.get('http://localhost:8080/viewAllProducts');
-      setProducts(res.data);
-      const q = {};
-      res.data.forEach((p) => (q[p.id] = 1));
-      setQuantities(q);
+      const res = await axios.get('http://localhost:8080/avgReview', {
+        params: { productId },
+      });
+      return parseFloat(res.data).toFixed(1);
     } catch (err) {
-      console.error('Failed to fetch products:', err);
+      console.error('Failed to fetch avg rating:', err);
+      return '0.0';
     }
   };
 
@@ -91,6 +123,10 @@ export default function Customer() {
     setShowSuggestions(false);
   };
 
+  const handelReview = (id) => {
+    navigate('/product_reviews', { state: { productId: id } });
+  };
+
   const displayedProducts = query.length > 0 ? results : products;
 
   return (
@@ -133,7 +169,7 @@ export default function Customer() {
               <p><strong>Brand:</strong> {p.brand}</p>
               <p><strong>Category:</strong> {p.category}</p>
               <p><strong>Description:</strong> {p.description}</p>
-              <p><strong>Ratings:</strong> ⭐ {p.ratings.toFixed(1)}</p>
+              <p><strong>Ratings:</strong> ⭐ {avgRatings[p.id] || '0.0'}</p>
               <p><strong>Price:</strong> ₹{p.price.toFixed(2)}</p>
               <p><strong>Discount:</strong> {p.discount}% OFF</p>
               <p><strong>Final Price:</strong> ₹{p.finalPrice.toFixed(2)}</p>
@@ -147,6 +183,7 @@ export default function Customer() {
                   value={quantities[p.id] || 1}
                   onChange={(e) => handleQuantityChange(p.id, e.target.value)}
                 />
+                <button onClick={() => handelReview(p.id)}>See Reviews</button>
                 <button onClick={() => handleCart(p)}>Add to Cart</button>
               </div>
             </div>

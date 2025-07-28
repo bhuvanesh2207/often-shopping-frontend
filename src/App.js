@@ -20,21 +20,25 @@ import Checkout from './pages/Checkout';
 import CustomerProfile from './pages/CustomerProfile';
 import ViewOrders from './pages/ViewOrders';
 import OrderHistory from './pages/OrderHistory';
-import ChangePassword from './pages/ChangePassword';
+import AdminChangePassword from './pages/AdminChangePassword';
 import AddAddress from './pages/AddAddress';
 import CustomerNavbar from './pages/CustomerNavbar';
 import CustomerService from './pages/CustomerService';
 import ConfrimOrders from './pages/ConfrimOrders';
-
+import Reviews from './pages/Reviews';
+import AddReview from './pages/AddReview';
 
 import JoinDelivery from './pages/JoinDelivery';
 import DeliverySignup from './pages/DeliverySignup';
-import DeliveryPage from './pages/DeliveryPage';
+import DeliveryOrders from './pages/DeliveryOrders';
+import CustomerDeliveryOtp from './pages/CustomerDeliveryOtp';
+import DelievryPersonChangePass from './pages/DelievryPersonChangePass';
+import DeliveryPersonNavbar from './pages/DeliveryPersonNavbar';
 
 import Footer from './pages/Footer';
 
-import './styles/Global.css'
-import CustomerDeliveryOtp from './pages/CustomerDeliveryOtp';
+import './style/Global.css'
+import DeliveryHome from './pages/DeliveryHome';
 
 
 
@@ -54,6 +58,7 @@ function App() {
         <Route path="/admin_sell" element={<AdminSell />} />
         <Route path="/adminNavbar" element={<AdminNavbar />} />
         <Route path='/ordered_product' element={<OrderedProduct/>}/>
+        <Route path="/changePassword_page" element={<AdminChangePassword />} />
 
         <Route path="/customer_signup" element={<CustomerSignup />} />
         <Route path="/customer_page" element={<CustomerPage />} />
@@ -62,16 +67,19 @@ function App() {
         <Route path="/customer_profile_page" element={<CustomerProfile />} />
         <Route path="/view_orders" element={<ViewOrders />} />
         <Route path="/order_history" element={<OrderHistory />} />
-        <Route path="/changePassword_page" element={<ChangePassword />} />
         <Route path="/add_address" element={<AddAddress />} />
         <Route path="/customer_service" element={<CustomerService />} />
         <Route path="/confirm_order" element={<ConfrimOrders />} />
-
+        <Route path="/product_reviews" element={<Reviews/>}/>
+        <Route path="/add_review" element={<AddReview/>}/>
+        
         <Route path="/join_delivery" element={<JoinDelivery/>}/>
         <Route path="/delivery_signup" element={<DeliverySignup/>}/>
-        <Route path="/delivery_page" element={<DeliveryPage/>}/>
+        <Route path="/delivery_page" element={<DeliveryHome/>}/>
+        <Route path="/delivery_orders" element={<DeliveryOrders/>}/>
         <Route path="/customer_delievry_otp" element={<CustomerDeliveryOtp/>}/>
-        
+        <Route path="/delivery_person_change_pass" element={<DelievryPersonChangePass/>}/>
+        <Route path='/delievry_person_navbar' element={<DeliveryPersonNavbar/>}/>
         <Route element={<CustomerNavbar />} />
       </Routes>
       <Footer />

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import qs from 'qs';
 import CustomerNavbar from './CustomerNavbar';
-
+import {Link} from 'react-router-dom';
 export default function ViewOrders() {
   const customerId = localStorage.getItem("id");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  
   useEffect(() => {
     if (customerId) {
       const fetchOrders = async () => {
@@ -83,7 +83,7 @@ export default function ViewOrders() {
 
   if (loading) return <div>Loading orders...</div>;
   if (!orders.length) return <div>No orders found!</div>;
-
+  console.log("Order:", orders);
   return (
     <div className="view-orders">
       <CustomerNavbar />
@@ -95,7 +95,7 @@ export default function ViewOrders() {
             <p><strong>Order Time:</strong> {new Date(order.ordertime).toLocaleString()}</p>
             <p><strong>Payment ID:</strong> {order.paymentId || "Cash On Delivery"}</p>
             <p><strong>Total Amount:</strong> ₹{order.totAmount?.toFixed(2)}</p>
-             <p><strong>Status:</strong> {order.status}</p>
+            <p><strong>Status:</strong> {order.status || "DELIVERED"}</p>
             {order.address && (
               <p><strong>Address:</strong> {[order.address.street, order.address.city, order.address.state, order.address.pincode].filter(Boolean).join(', ')}</p>
             )}
@@ -114,8 +114,10 @@ export default function ViewOrders() {
                     <div className="price-section">
                       <span>₹{item.price.toFixed(2)}</span>
                     </div>
+                      <Link to="/add_review" state={{ productId: item.productId }}>ADD REVIEW</Link>
                   </div>
-                </div>
+                
+                  </div> 
               ))}
             </div>
           ) : (

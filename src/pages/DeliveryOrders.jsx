@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import {Link} from 'react-router-dom';
+import DeliveryPersonNavbar from './DeliveryPersonNavbar';
 export default function DeliveryPerson() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -120,8 +121,11 @@ export default function DeliveryPerson() {
   if (loading) return <div>Loading delivery orders...</div>;
 
   return (
-    <div style={{ padding: '1rem' }}>
+    
+    <div>
+      <DeliveryPersonNavbar/>
       <h2>Delivery Products</h2>
+      <button><Link to="/delivery_person_change_pass">Reset Password</Link></button>
       {orders.length === 0 ? (
         <p>No ordered products found.</p>
       ) : (
@@ -176,7 +180,7 @@ export default function DeliveryPerson() {
 
               <button
                 onClick={() => handleDelivered(order.orderId)}
-                disabled={order.status !== "OTP Verified" || buttonDisabled[order.orderId + "_delivered"]}
+                disabled={order.status !== "Out for Delivery" || buttonDisabled[order.orderId + "_delivered"]}
               >
                 DELIVERED
               </button>

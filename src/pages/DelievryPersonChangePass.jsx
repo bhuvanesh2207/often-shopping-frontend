@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import AdminNavbar from "./AdminNavbar";
+import DeliveryPersonNavbar from './DeliveryPersonNavbar';
 
-export default function ChangePassword() {
+export default function AdminChangePassword() {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -13,7 +13,8 @@ export default function ChangePassword() {
     e.preventDefault();
 
     axios
-      .post('http://localhost:8080/generatedOtp', { email })
+      .get('http://localhost:8080/deliveryPerChangePasswordotp', { params: { email }})
+
       .then((res) => {
         alert('OTP sent to your email');
         setStep(2);
@@ -29,7 +30,7 @@ export default function ChangePassword() {
     e.preventDefault();
 
     axios
-      .post('http://localhost:8080/verifyOtp', { email, otp })
+      .post('http://localhost:8080/deliveryPerOtpVerification', { email, otp })
       .then((res) => {
         alert('OTP verified successfully');
         setStep(3);
@@ -44,8 +45,7 @@ export default function ChangePassword() {
   const handleSetPassword = (e) => {
     e.preventDefault();
 
-    axios
-      .post('http://localhost:8080/setPassword', { email, newPassword })
+    axios.post('http://localhost:8080/deliveryPerResetPassword', { deliveryEmail: email, newPassword: newPassword })
       .then((res) => {
         alert('Password changed successfully');
         setStep(1); // Reset flow
@@ -61,9 +61,9 @@ export default function ChangePassword() {
 
   return (
     <div>
-      <AdminNavbar/>
+      
+      <DeliveryPersonNavbar/>
       <h2>Change Password</h2>
-
       {step === 1 && (
         <form onSubmit={handleGenerateOtp}>
           <label>Email:</label><br />
