@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import '../style/Form.css';
+import CustomerNavbar from './CustomerNavbar';
 
 export default function AddReview() {
   const location = useLocation();
@@ -9,11 +11,16 @@ export default function AddReview() {
   const { productId } = location.state || {};
 
   const [formData, setFormData] = useState({
-    productId: productId || '', // fallback in case state is missing
+    productId: productId || '', 
     reviewerName: '',
     comment: '',
     rating: ''
   });
+
+  const reviewRef = useRef(null);
+  useEffect(() => {
+    if (reviewRef.current) reviewRef.current.focus();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,9 +44,11 @@ export default function AddReview() {
   };
 
   return (
-    <div className="add-review-form">
-      <h2>Add Review</h2>
-      <form onSubmit={handleSubmit}>
+    <>
+    <CustomerNavbar/>
+    <div className="container">
+      <form onSubmit={handleSubmit} className="auth-form">
+         <h2>Add Review</h2>
         <input type="hidden" name="productId" value={formData.productId} />
 
         <div>
@@ -49,6 +58,7 @@ export default function AddReview() {
             name="reviewerName"
             value={formData.reviewerName}
             onChange={handleChange}
+            ref={reviewRef}
             required
           />
         </div>
@@ -60,11 +70,12 @@ export default function AddReview() {
             value={formData.comment}
             onChange={handleChange}
             required
+            
           />
         </div>
 
         <div>
-          <label>Rating (1–5):</label>
+          <label>Rating:</label>
           <input
             type="number"
             name="rating"
@@ -79,5 +90,6 @@ export default function AddReview() {
         <button type="submit">Submit Review</button>
       </form>
     </div>
+    </>
   );
 }

@@ -1,0 +1,78 @@
+.tracker-container {
+  padding: 30px;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.tracker-steps {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 40px;
+  padding: 0 30px;
+  --progress: 0;
+}
+
+.tracker-line {
+  position: absolute;
+  top: 22px;
+  left: 30px;
+  right: 30px;
+  height: 4px;
+  background-color: #e0e0e0;
+  border-radius: 2px;
+  z-index: 1;
+}
+
+.tracker-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: orange;
+  border-radius: 2px;
+  width: calc((100% / 3) * var(--progress, 0));
+  transition: width 0.4s ease-in-out;
+  z-index: 2;
+}
+
+.tracker-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 3;
+  flex: 1;
+  position: relative;
+}
+
+.circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+  color: #555;
+  z-index: 3;
+}
+
+.circle.active {
+  background-color: orange;
+  color: white;
+}
+
+.label {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #999;
+}
+
+.label.active {
+  color: orange;
+}

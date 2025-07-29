@@ -28,29 +28,31 @@ export default function AdminProfile() {
   };
 
   return (
-    <div className="profile-container">
-      <h2>Admin Profile</h2>
+    <div className="container">
+      <div className="profile-container">
+        <h2>Admin Profile</h2>
 
-      {admin ? (
-        <div className="profile-details">
-          <p><strong>Business Name:</strong> {admin.businessName}</p>
-          <p><strong>Business Type:</strong> {admin.businessType}</p>
-          <p><strong>GST Number:</strong> {admin.gstNumber}</p>
-          <p><strong>PAN Number:</strong> {admin.panNumber}</p>
-          <p><strong>Company Email:</strong> {admin.companyEmail}</p>
-          <p><strong>Business Address:</strong> {admin.businessAddress}</p>
-          <p><strong>City:</strong> {admin.city}</p>
-          <p><strong>State:</strong> {admin.state}</p>
-          <p><strong>Pincode:</strong> {admin.pincode}</p>
+        {admin ? (
+          <div className="profile-details">
+            <p><strong>Business Name:</strong> {admin.businessName}</p>
+            <p><strong>Business Type:</strong> {admin.businessType}</p>
+            <p><strong>GST Number:</strong> {admin.gstNumber}</p>
+            <p><strong>PAN Number:</strong> {admin.panNumber}</p>
+            <p><strong>Company Email:</strong> {admin.companyEmail}</p>
+            <p><strong>Business Address:</strong> {admin.businessAddress}</p>
+            <p><strong>City:</strong> {admin.city}</p>
+            <p><strong>State:</strong> {admin.state}</p>
+            <p><strong>Pincode:</strong> {admin.pincode}</p>
+          </div>
+        ) : (
+          <p>Loading admin details...</p>
+        )}
+
+        <div className="profile-buttons">
+          <button onClick={handleLogout}>
+            Logout <IoIosLogOut className="logout-icon" />
+          </button>
         </div>
-      ) : (
-        <p>Loading admin details...</p>
-      )}
-
-      <div className="profile-buttons">
-        <button onClick={handleLogout}>
-          Logout <IoIosLogOut className="logout-icon" />
-        </button>
       </div>
     </div>
   );

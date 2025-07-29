@@ -27,20 +27,20 @@ import CustomerService from './pages/CustomerService';
 import ConfrimOrders from './pages/ConfrimOrders';
 import Reviews from './pages/Reviews';
 import AddReview from './pages/AddReview';
+import TrackOrder from './pages/TrackOrder';
 
 import JoinDelivery from './pages/JoinDelivery';
+import DeliveryPersonProfile from './pages/DeliveryPersonProfile';
 import DeliverySignup from './pages/DeliverySignup';
 import DeliveryOrders from './pages/DeliveryOrders';
 import CustomerDeliveryOtp from './pages/CustomerDeliveryOtp';
 import DelievryPersonChangePass from './pages/DelievryPersonChangePass';
 import DeliveryPersonNavbar from './pages/DeliveryPersonNavbar';
+import DeliveryHome from './pages/DeliveryHome';
 
 import Footer from './pages/Footer';
 
 import './style/Global.css'
-import DeliveryHome from './pages/DeliveryHome';
-
-
 
 function App() {
   return (
@@ -72,8 +72,10 @@ function App() {
         <Route path="/confirm_order" element={<ConfrimOrders />} />
         <Route path="/product_reviews" element={<Reviews/>}/>
         <Route path="/add_review" element={<AddReview/>}/>
-        
+        <Route path="/track_order" element={<TrackOrder/>}/>
+
         <Route path="/join_delivery" element={<JoinDelivery/>}/>
+        <Route path="/delivery_person_profile" element={<DeliveryPersonProfile/>}/>
         <Route path="/delivery_signup" element={<DeliverySignup/>}/>
         <Route path="/delivery_page" element={<DeliveryHome/>}/>
         <Route path="/delivery_orders" element={<DeliveryOrders/>}/>

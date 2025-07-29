@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import '../style/Form.css';
 
-export default function DeliverySignup() {
+export default function JoinDelivery() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [address, setAddress] = useState('');
   const [documentUrl, setDocumentUrl] = useState('');
+
+  const nameRef = useRef(null);
+  useEffect(() => {
+    if (nameRef.current) nameRef.current.focus();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,27 +36,36 @@ export default function DeliverySignup() {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Delivery Person Signup</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px' }}>
+    <div className="container">
+      <div className="auth-container">
+        <h2>Delivery Person Signup</h2>
+        <form onSubmit={handleSubmit} className="auth-form">
+          <label htmlFor="name">Name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            ref={nameRef}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
 
-        <label>Name:</label>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+          <label>Email:</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
 
-        <label>Email:</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <label>Phone Number:</label>
+          <input type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required />
 
-        <label>Phone Number:</label>
-        <input type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required />
+          <label>Address:</label>
+          <textarea value={address} onChange={(e) => setAddress(e.target.value)} required />
 
-        <label>Address:</label>
-        <textarea value={address} onChange={(e) => setAddress(e.target.value)} required />
+          <label>Document URL:</label>
+          <input type="url" value={documentUrl} onChange={(e) => setDocumentUrl(e.target.value)} required />
 
-        <label>Document URL:</label>
-        <input type="url" value={documentUrl} onChange={(e) => setDocumentUrl(e.target.value)} required />
-
-        <button type="submit" style={{ marginTop: '20px' }}>Sign Up</button>
-      </form>
+          <button type="submit" className="auth-button">Join Delivery</button>
+        </form>
+      </div>
     </div>
   );
 }

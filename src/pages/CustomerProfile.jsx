@@ -28,6 +28,7 @@ export default function Profile() {
   };
 
   return (
+    <div className="container">
     <div className="profile-container">
       <h2>Profile</h2>
 
@@ -47,6 +48,6 @@ export default function Profile() {
         </button>
       </div>
     </div>
-
+    </div>
   );
 }

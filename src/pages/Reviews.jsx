@@ -36,7 +36,7 @@ export default function Reviews() {
 
   return (
     <div>
-      <h2>Reviews for Product </h2>
+      <h2>Customer Reviews</h2>
       {reviews.length === 0 ? (
         <p>No reviews found.</p>
       ) : (

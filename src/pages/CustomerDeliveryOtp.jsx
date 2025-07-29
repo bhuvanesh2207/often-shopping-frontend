@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import '../style/Form.css';
 
 export default function CustomerDeliveryOtp() {
   const location = useLocation();
@@ -8,6 +9,7 @@ export default function CustomerDeliveryOtp() {
   const [otp, setOtp] = useState('');
   const [orderId, setOrderId] = useState(null);
   const [error, setError] = useState('');
+  const otpRef = useRef(null);
 
   useEffect(() => {
     if (location.state && location.state.orderId) {
@@ -16,6 +18,10 @@ export default function CustomerDeliveryOtp() {
       setError("Invalid access. No Order ID found.");
     }
   }, [location.state]);
+
+  useEffect(() => {
+    if (otpRef.current) otpRef.current.focus();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,7 +36,7 @@ export default function CustomerDeliveryOtp() {
 
       if (response.data === "OTP verified successfully!") {
         alert("OTP Verified! Order marked as delivered.");
-        navigate("/delivery_page"); 
+        navigate("/delivery_page");
       } else {
         setError("Invalid OTP. Please try again.");
       }
@@ -40,19 +46,18 @@ export default function CustomerDeliveryOtp() {
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <div className="container">
       <h2>Verify Customer OTP</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="otp">Enter OTP:</label><br />
+      <form onSubmit={handleSubmit} className="auth-form">
+        <label>Enter OTP:</label>
         <input
           type="text"
-          id="otp"
+          ref={otpRef}
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
           required
-          style={{ padding: '0.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}
-        /><br />
+        />
         <button type="submit" style={{ padding: '0.5rem 1rem' }}>Verify OTP</button>
       </form>
     </div>

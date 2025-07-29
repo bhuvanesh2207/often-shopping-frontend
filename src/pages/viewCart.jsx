@@ -72,53 +72,54 @@ export default function ViewCart() {
   };
 
   return (
-    <div className="cart-wrapper">
+    <>
       <CustomerNavbar />
-      <div className="cart-container">
-        <h2>{email}'s Shopping Cart</h2>
+      <div className="cart-wrapper">
+        <div className="cart-container">
+          <h2>{email}'s Shopping Cart</h2>
 
-        {items.length === 0 ? (
-          <div className="empty-cart">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png"
-              alt="Empty Cart"
-            />
-            <h3>Your cart is empty</h3>
-          </div>
-        ) : (
-          <>
-            {items.map((item) => (
-              <div key={item.productId} className="cart-item">
-                <img src={item.productImage} alt={item.productName} />
-                <div className="cart-details">
-                  <Link to={`/product/${item.productId}`} className="product-name">
-                    {item.productName}
-                  </Link>
-                  <div className="quantity-controls">
-                    <button onClick={() => updateQuantity(item, item.quantity - 1)}>-</button>
-                    <span>{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item, item.quantity + 1)}>+</button>
-                  </div>
-                  <button className="delete-button" onClick={() => handleDeleteCart(item.id)}>
-                    Delete
-                  </button>
-                </div>
-                <div className="product-price">
-                  ₹{(item.price * item.quantity).toFixed(2)}
-                </div>
-              </div>
-            ))}
-            <h3 className="cart-subtotal">Total: ₹{total.toFixed(2)}</h3>
-            <div className="cart-actions">
-              <Link to="/customer_page">
-                <button>Continue Shopping</button>
-              </Link>
-              <button onClick={handleProceedToCheckout}>Proceed to Checkout</button>
+          {items.length === 0 ? (
+            <div className="empty-cart">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png"
+                alt="Empty Cart"
+              />
+              <h3>Your cart is empty</h3>
             </div>
-          </>
-        )}
+          ) : (
+            <>
+              {items.map((item) => (
+                <div key={item.productId} className="cart-item">
+                  <img src={item.productImage} alt={item.productName} />
+                  <div className="cart-details">
+                    <Link to={`/product/${item.productId}`} className="product-name">
+                      {item.productName}
+                    </Link>
+                    <div className="quantity-controls">
+                      <button onClick={() => updateQuantity(item, item.quantity - 1)}>-</button>
+                      <span>{item.quantity}</span>
+                      <button onClick={() => updateQuantity(item, item.quantity + 1)}>+</button>
+                    </div>
+                    <button className="delete-button" onClick={() => handleDeleteCart(item.id)}>
+                      Delete
+                    </button>
+                  </div>
+                  <div className="product-price">
+                    ₹{(item.price * item.quantity).toFixed(2)}
+                  </div>
+                </div>
+              ))}
+              <h3 className="cart-subtotal">Total: ₹{total.toFixed(2)}</h3>
+              <div className="cart-actions">
+                <Link to="/customer_page">
+                  <button>Continue Shopping</button>
+                </Link>
+                <button onClick={handleProceedToCheckout}>Proceed to Checkout</button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </div>
-
+    </>
   );
 }

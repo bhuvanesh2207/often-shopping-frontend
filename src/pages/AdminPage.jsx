@@ -50,53 +50,53 @@ function ProductTable() {
       });
   };
 
-  return (
+  return (  
     <>
-        <AdminNavbar/>
-      <h1>Admin Products Page</h1>
-      <Link to="/changePassword_page"><button>Set New / Change Password</button></Link><br />
-      <Link to="/add_product"><button>Add Products</button></Link>
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Product Name</th>
-            <th>Category</th>
-            <th>Brand</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Discount</th>
-            <th>Final Price</th>
-            <th>Product Image</th>
-            <th>Operations</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.length === 0 ? (
+      <AdminNavbar/>
+      <div className="container">
+        <h1>Admin Products Page</h1>
+        <table border="1">
+          <thead>
             <tr>
-              <td colSpan="10">No products found.</td>
+              <th>Product Name</th>
+              <th>Category</th>
+              <th>Brand</th>
+              <th>Description</th>
+              <th>Price</th>
+              <th>Discount</th>
+              <th>Final Price</th>
+              <th>Product Image</th>
+              <th>Operations</th>
             </tr>
-          ) : (
-            products.map(p => (
-              <tr key={p.id}>
-                <td>{p.productName}</td>
-                <td>{p.category}</td>
-                <td>{p.brand}</td>
-                <td>{p.description}</td>
-                <td>{p.price}</td>
-                <td>{p.discount}</td>
-                <td>{p.finalPrice}</td>
-                <td>
-                  <img src={p.productImage} alt={p.productName} height="40" width="50" />
-                </td>
-                <td>
-                  <button onClick={() => handleUpdate(p)}>Update</button>
-                  <button onClick={() => handleDelete(p.id)}>Delete</button>
-                </td>
+          </thead>
+          <tbody>
+            {products.length === 0 ? (
+              <tr>
+                <td colSpan="10">No products found.</td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              products.map(p => (
+                <tr key={p.id}>
+                  <td>{p.productName}</td>
+                  <td>{p.category}</td>
+                  <td>{p.brand}</td>
+                  <td>{p.description}</td>
+                  <td>{p.price}</td>
+                  <td>{p.discount}</td>
+                  <td>{p.finalPrice}</td>
+                  <td>
+                    <img src={p.productImage} alt={p.productName} height="40" width="50" />
+                  </td>
+                  <td>
+                    <button onClick={() => handleUpdate(p)}>Update</button>
+                    <button onClick={() => handleDelete(p.id)}>Delete</button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }

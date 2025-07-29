@@ -14,7 +14,8 @@ export default function ViewOrders() {
         try {
           const ordersRes = await axios.get("http://localhost:8080/listOfOrders", {
             params: { id: customerId }
-          });
+            
+          });console.log(ordersRes);
           const rawOrders = ordersRes.data || [];
 
           const allProductIds = rawOrders
@@ -85,46 +86,51 @@ export default function ViewOrders() {
   if (!orders.length) return <div>No orders found!</div>;
   console.log("Order:", orders);
   return (
-    <div className="view-orders">
+    <>
       <CustomerNavbar />
-      <h2>Your Orders</h2>
-      {orders.map((order, index) => (
-        <div className="order-card" key={index}>
-          <h3>Order #{index + 1}</h3>
-          <div className="order-info">
-            <p><strong>Order Time:</strong> {new Date(order.ordertime).toLocaleString()}</p>
-            <p><strong>Payment ID:</strong> {order.paymentId || "Cash On Delivery"}</p>
-            <p><strong>Total Amount:</strong> ₹{order.totAmount?.toFixed(2)}</p>
-            <p><strong>Status:</strong> {order.status || "DELIVERED"}</p>
-            {order.address && (
-              <p><strong>Address:</strong> {[order.address.street, order.address.city, order.address.state, order.address.pincode].filter(Boolean).join(', ')}</p>
+      <div className="view-orders">
+        <h2>Your Orders</h2>
+        {orders.map((order, index) => (
+          <div className="order-card" key={index}>
+            <h3>Order #{index + 1}</h3>
+            <div className="order-info">
+              <p><strong>Order Time:</strong> {new Date(order.ordertime).toLocaleString()}</p>
+              <p><strong>Payment ID:</strong> {order.paymentId || "Cash On Delivery"}</p>
+              <p><strong>Total Amount:</strong> ₹{order.totAmount?.toFixed(2)}</p>
+              <p><strong>Order Status:</strong> {order.status || "-"}</p>
+              {order.address && (
+                <p><strong>Address:</strong> {[order.address.street, order.address.city, order.address.state, order.address.pincode].filter(Boolean).join(', ')}</p>
+              )}
+            </div>
+
+            <h4>Items:</h4>
+            {order.items.length ? (
+              <div className="items-grid">
+                {order.items.map((item, i) => (
+                  <div className="item-card" key={i}>
+                    <img src={item.image} alt={item.name} className="item-image" />
+                    <div className="item-details">
+                      <p className="item-name">Name: {item.name}</p>
+                      {item.brand && <p><strong>Brand: </strong>{item.brand}</p>}
+                      <p><strong>Quantity: </strong>{item.quantity}</p>
+                      <div className="price-section">
+                        <span>₹{item.price.toFixed(2)}</span>
+                      </div>
+                        <Link to= '/track_order' state={{status : order.status}}>Track Order</Link>
+                        {order.status === "DELIVERED" && (
+                          <Link to="/add_review" state={{ productId: item.productId }}>ADD REVIEW</Link>
+                        )}
+                    </div>
+                  
+                    </div> 
+                ))}
+              </div>
+            ) : (
+              <p>No items found for this order.</p>
             )}
           </div>
-
-          <h4>Items:</h4>
-          {order.items.length ? (
-            <div className="items-grid">
-              {order.items.map((item, i) => (
-                <div className="item-card" key={i}>
-                  <img src={item.image} alt={item.name} className="item-image" />
-                  <div className="item-details">
-                    <p className="item-name">Name: {item.name}</p>
-                    {item.brand && <p><strong>Brand: </strong>{item.brand}</p>}
-                    <p><strong>Quantity: </strong>{item.quantity}</p>
-                    <div className="price-section">
-                      <span>₹{item.price.toFixed(2)}</span>
-                    </div>
-                      <Link to="/add_review" state={{ productId: item.productId }}>ADD REVIEW</Link>
-                  </div>
-                
-                  </div> 
-              ))}
-            </div>
-          ) : (
-            <p>No items found for this order.</p>
-          )}
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </>
   );
 }

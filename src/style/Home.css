@@ -1,0 +1,272 @@
+/* ================== PAGE CONTAINER ================== */
+.home-container {
+  max-width: 80%;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+/* ================= HERO SECTION ================= */
+.hero {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  height: 400px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  transition: background-image 2s ease-in-out;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.hero-content {
+  max-width: 400px;
+}
+
+.hero-title {
+  font-size: 36px;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-subtitle {
+  font-size: 18px;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-nav {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  padding: 0 20px;
+  pointer-events: none;
+}
+
+.hero-nav-btn {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  font-size: 30px;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  pointer-events: all;
+  border-radius: 6px;
+}
+
+/* ================= INDIA BANNER ================= */
+.india-banner {
+  background-color: #fefae0;
+  padding: 12px 20px;
+  text-align: center;
+  font-size: 14px;
+  margin-top: 20px;
+  border-radius: 6px;
+}
+
+.india-link {
+  color: #007185;
+  text-decoration: none;
+}
+
+.india-link:hover {
+  text-decoration: underline;
+}
+
+/* ================= CATEGORIES SECTION ================= */
+.categories {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 40px 0;
+  background: linear-gradient(to bottom, #ffffff, #f9f9f9);
+}
+
+.category-card {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 300px;
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+}
+
+.category-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #222;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.category-item {
+  text-align: center;
+}
+
+.category-item img {
+  width: 100%;
+  max-height: 80px;
+  object-fit: contain;
+  border-radius: 6px;
+  transition: transform 0.3s;
+}
+
+.category-item img:hover {
+  transform: scale(1.05);
+}
+
+.category-item span {
+  display: block;
+  font-size: 13px;
+  margin-top: 6px;
+  color: #444;
+}
+
+.category-link {
+  margin-top: auto;
+  text-align: left;
+  font-size: 13px;
+  color: #007185;
+  cursor: pointer;
+}
+
+.category-link:hover {
+  text-decoration: underline;
+}
+
+/* ================= PRODUCT CARDS ================= */
+.product-card {
+  background: white;
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1rem 0;
+  display: flex;
+  gap: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  align-items: flex-start;
+}
+
+.product-image img {
+  width: 150px;
+  border-radius: 4px;
+}
+
+.product-details {
+  flex: 1;
+}
+
+.product-details p {
+  margin: 0.2rem 0;
+  color: #333;
+}
+
+.action-row {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ================= HOME BUTTON ================= */
+.home-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #ff6600;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  text-decoration: none;
+  border: none;
+  transition: background 0.3s, color 0.2s, border 0.2s;
+}
+
+.home-button:hover {
+  background: #fff;
+  color: #ff6b00;
+  border: 1.5px solid #ff6b00;
+}
+
+/* ========== Often Shopping Logo ========== */
+.logo {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+
+.logo-text {
+  font-size: 1.75rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #FF7A00, #0033ff); /* Orange to Lavender */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Poppins', sans-serif;
+  transition: transform 0.3s ease;
+}
+
+.logo-text:hover {
+  transform: scale(1.05);
+}
+
+/* ================= RESPONSIVE STYLES ================= */
+@media (max-width: 1024px) {
+  .categories {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    height: auto;
+    padding: 40px 20px;
+  }
+
+  .categories {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .product-card {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .product-image img {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .categories {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-title {
+    font-size: 28px;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+  }
+}

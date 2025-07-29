@@ -1,8 +1,8 @@
-// src/pages/Customer.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import CustomerNavbar from './CustomerNavbar';
+import '../style/CustomerPage.css';
 
 export default function Customer() {
   const [email, setEmail] = useState('');
@@ -12,6 +12,9 @@ export default function Customer() {
   const [avgRatings, setAvgRatings] = useState({});
   const [query, setQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [hoveredProductId, setHoveredProductId] = useState(null); // ✅ NEW STATE
+  const [alreadyHovered, setAlreadyHovered] = useState({}); // ✅ NEW STATE
+
   const navigate = useNavigate();
   const location = useLocation();
   const passedKeyword = location.state?.keyword || '';
@@ -28,36 +31,31 @@ export default function Customer() {
     }
   }, []);
 
- const fetchProducts = async () => {
-  try {
-    const res = await axios.get('http://localhost:8080/viewAllProducts');
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get('http://localhost:8080/viewAllProducts');
 
-    // Calculate final price for each product
-    const productsWithFinalPrice = res.data.map(p => ({
-      ...p,
-      finalPrice: Number(
-        (p.price * (1 - (p.discount || 0) / 100)).toFixed(2)
-      ),
-    }));
-    setProducts(productsWithFinalPrice);
+      const productsWithFinalPrice = res.data.map(p => ({
+        ...p,
+        finalPrice: Number((p.price * (1 - (p.discount || 0) / 100)).toFixed(2)),
+      }));
+      setProducts(productsWithFinalPrice);
 
-    // Set default quantity = 1 for each product
-    const q = {};
-    productsWithFinalPrice.forEach(p => (q[p.id] = 1));
-    setQuantities(q);
+      const q = {};
+      productsWithFinalPrice.forEach(p => (q[p.id] = 1));
+      setQuantities(q);
 
-    // Fetch average ratings
-    const avgObj = {};
-    for (let p of productsWithFinalPrice) {
-      const avg = await fetchAvgRating(p.id);
-      avgObj[p.id] = avg;
+      const avgObj = {};
+      for (let p of productsWithFinalPrice) {
+        const avg = await fetchAvgRating(p.id);
+        avgObj[p.id] = avg;
+      }
+      setAvgRatings(avgObj);
+
+    } catch (err) {
+      console.error('Failed to fetch products:', err);
     }
-    setAvgRatings(avgObj);
-
-  } catch (err) {
-    console.error('Failed to fetch products:', err);
-  }
-};
+  };
 
   const fetchAvgRating = async (productId) => {
     try {
@@ -130,66 +128,73 @@ export default function Customer() {
   const displayedProducts = query.length > 0 ? results : products;
 
   return (
-    <div>
+    <>
       <CustomerNavbar />
-      <h2>Welcome {email}</h2>
-      <div>
-        <button onClick={() => navigate('/view_cart_page')}>View Cart</button>
-        <Link to="/profile_page">
-          <button>Profile</button>
-        </Link>
-      </div>
+      <div className="container">
+        <h2>Welcome {email}</h2>
+        <div>
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={query}
+            onChange={handleInputChange}
+          />
+          {results.length > 0 && showSuggestions && (
+            <ul>
+              {results.map((p) => (
+                <li key={p.id} onClick={() => handleSelect(p)}>
+                  {p.productName} - {p.brand}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
-      <div>
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={query}
-          onChange={handleInputChange}
-        />
-        {results.length > 0 && showSuggestions && (
-          <ul>
-            {results.map((p) => (
-              <li key={p.id} onClick={() => handleSelect(p)}>
-                {p.productName} - {p.brand}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+        <div className="product-list">
+          {displayedProducts.map((p) => (
+            <div
+              className="product-card"
+              key={p.id}
+              onMouseEnter={() => {
+                if (!alreadyHovered[p.id]) {
+                  setHoveredProductId(p.id);
+                  setAlreadyHovered(prev => ({ ...prev, [p.id]: true }));
+                }
+              }}
+              onMouseLeave={() => setHoveredProductId(null)}
+            >
+              <div className="product-image">
+                <img src={p.productImage} alt={p.productName} />
+              </div>
+              <div className="product-details">
+                <h3>{p.productName}</h3>
+                <p><strong>Brand:</strong> {p.brand}</p>
+                <p><strong>Category:</strong> {p.category}</p>
+                <p><strong>Description:</strong> {p.description}</p>
+                <p><strong>Ratings:</strong> ⭐ {avgRatings[p.id] || '0.0'}</p>
+                <div className="price-section">
+                  <div className="discount-badge">-{p.discount}%</div>
+                  <div className="final-price">₹{(p.finalPrice)}</div>
+                  <div className="original-price">List Price: <s>₹{(p.price)}</s></div>
+                </div>
 
-      <div className="product-list">
-        {displayedProducts.map((p) => (
-          <div className="product-card" key={p.id}>
-            <div className="product-image">
-              <img src={p.productImage} alt={p.productName} width="150" />
-            </div>
-            <div className="product-details">
-              <h3>{p.productName}</h3>
-              <p><strong>Brand:</strong> {p.brand}</p>
-              <p><strong>Category:</strong> {p.category}</p>
-              <p><strong>Description:</strong> {p.description}</p>
-              <p><strong>Ratings:</strong> ⭐ {avgRatings[p.id] || '0.0'}</p>
-              <p><strong>Price:</strong> ₹{p.price.toFixed(2)}</p>
-              <p><strong>Discount:</strong> {p.discount}% OFF</p>
-              <p><strong>Final Price:</strong> ₹{p.finalPrice.toFixed(2)}</p>
-              <p><strong>Available Qty:</strong> {p.quantity}</p>
-
-              <div className="action-row">
-                <label>Qty: </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={quantities[p.id] || 1}
-                  onChange={(e) => handleQuantityChange(p.id, e.target.value)}
-                />
-                <button onClick={() => handelReview(p.id)}>See Reviews</button>
-                <button onClick={() => handleCart(p)}>Add to Cart</button>
+                <div className="action-row">
+                  <label>Qty: </label>
+                  <input
+                    type="number"
+                    min="1"
+                    className="quantity-input"
+                    value={quantities[p.id] || 1}
+                    onChange={(e) => handleQuantityChange(p.id, e.target.value)}
+                  />
+                  <button onClick={() => handelReview(p.id)}>Reviews</button>
+                  <button onClick={() => handleCart(p)}>Add to Cart</button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

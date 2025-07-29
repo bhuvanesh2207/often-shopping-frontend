@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
- import CustomerNavbar from './CustomerNavbar';
+import CustomerNavbar from './CustomerNavbar';
+import '../style/Form.css';
 
 export default function Checkout() {
   const location = useLocation();
@@ -137,71 +138,79 @@ export default function Checkout() {
     }
   };
 
+  const addressRadioRef = useRef(null);
+  useEffect(() => {
+    if (addressRadioRef.current) addressRadioRef.current.focus();
+  }, [addresses]);
+
   return (
-    <div>
+    <>
       <CustomerNavbar/>
-      <h1>Checkout Page</h1>
-      <h2>Total Amount: ₹{totalAmount.toFixed(2)}</h2>
-      <Link to="/add_address"><button>Add Address</button></Link>
+      <div className="container">
+        <h1>Checkout Page</h1>
+        <h2>Total Amount: ₹{totalAmount.toFixed(2)}</h2>
+        <Link to="/add_address"><button>Add Address</button></Link>
 
-      <h3>Select Shipping Address</h3>
-      {addressLoading ? (
-        <p>Loading addresses...</p>
-      ) : addresses.length === 0 ? (
-        <p>No saved addresses.</p>
-      ) : (
-        <div>
-          {addresses.map(addr => (
-            <div
-              key={addr.id}
-              className={`address-card ${selectedAddressId === addr.id ? 'selected' : ''}`}
-              onClick={() => setSelectedAddressId(addr.id)}
-              style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0', cursor: 'pointer' }}
-            >
-              <div><b>{addr.fullName}</b></div>
-              <div>{addr.street}, {addr.city}</div>
-              <div>{addr.state} - {addr.pincode}</div>
-              <div>Phone: {addr.phone}</div>
-              <button
-                onClick={e => { e.stopPropagation(); handleRemoveAddress(addr.id); }}
-                disabled={addressLoading}
+        <h3>Select Shipping Address</h3>
+        {addressLoading ? (
+          <p>Loading addresses...</p>
+        ) : addresses.length === 0 ? (
+          <p>No saved addresses.</p>
+        ) : (
+          <div>
+            {addresses.map(addr => (
+              <div
+                key={addr.id}
+                className={`address-card ${selectedAddressId === addr.id ? 'selected' : ''}`}
+                onClick={() => setSelectedAddressId(addr.id)}
+                style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0', cursor: 'pointer' }}
               >
-                Remove
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+                <div><b>{addr.fullName}</b></div>
+                <div>{addr.street}, {addr.city}</div>
+                <div>{addr.state} - {addr.pincode}</div>
+                <div>Phone: {addr.phone}</div>
+                <button
+                  onClick={e => { e.stopPropagation(); handleRemoveAddress(addr.id); }}
+                  disabled={addressLoading}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
 
-      <form onSubmit={(e) => { e.preventDefault(); handlePayment(); }}>
-        <h3>Payment Method</h3>
-        <label>
-          <input
-            type="radio"
-            name="payment"
-            value="Cash On Delivery"
-            checked={paymentMethod === "Cash On Delivery"}
-            onChange={e => setPaymentMethod(e.target.value)}
-          /> Cash On Delivery
-        </label>
-        <br />
-        <label>
-          <input
-            type="radio"
-            name="payment"
-            value="Online Payment"
-            checked={paymentMethod === "Online Payment"}
-            onChange={e => setPaymentMethod(e.target.value)}
-          /> Online Payment
-        </label>
-        <br />
-        <button type="submit" disabled={totalAmount === 0 || addresses.length === 0}>
-          Place Order
-        </button>
-      </form>
+        <form onSubmit={(e) => { e.preventDefault(); handlePayment(); }} className="auth-form">
+          <h3>Payment Method</h3>
+          <label>
+            <input
+              type="radio"
+              name="payment"
+              value="Cash On Delivery"
+              checked={paymentMethod === "Cash On Delivery"}
+              onChange={e => setPaymentMethod(e.target.value)}
+              ref={addressRadioRef}
+            /> Cash On Delivery
+          </label>
+          <br />
+          <label>
+            <input
+              type="radio"
+              name="payment"
+              value="Online Payment"
+              checked={paymentMethod === "Online Payment"}
+              onChange={e => setPaymentMethod(e.target.value)}
+            /> Online Payment
+          </label>
+          <br />
+          <button type="submit" disabled={totalAmount === 0 || addresses.length === 0}>
+            Place Order
+          </button>
+        </form>
 
-      <br />
-      <Link to="/view_cart_page"><button>Back to Cart</button></Link>
-    </div>
+        <br />
+        <Link to="/view_cart_page"><button>Back to Cart</button></Link>
+      </div>
+    </>
   );
 }

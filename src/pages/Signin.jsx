@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import '../style/Form.css';
 
 export default function Signin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const emailRef = useRef(null);
+  useEffect(() => {
+    if (emailRef.current) emailRef.current.focus();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -38,32 +43,35 @@ export default function Signin() {
   }
 
   return (
-    <div className="auth-container">
-      <form className="auth-form" onSubmit={handleSubmit} method="post">
-        <h2>Sign In</h2>
-        
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+    <div className="container">
+      <div className="auth-container">
+        <form className="auth-form" onSubmit={handleSubmit} method="post">
+          <h2>Sign In</h2>
+          
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            ref={emailRef}
+          />
 
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <label htmlFor="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
-        <button type="submit" className="auth-button">SIGN IN</button>
-      </form>
+          <button type="submit" className="auth-button">SIGN IN</button>
+        </form>
+      </div>
     </div>
   );
 }

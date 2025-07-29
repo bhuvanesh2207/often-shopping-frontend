@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../style/Navbar.css'
+import '../style/Home.css'
 const heroSlides = [
   {
     title: "Gaming Store",
@@ -46,15 +47,9 @@ export default function Home() {
     <div className="homepage">
       {/* Header */}
       <header className="header">
-        <div className="header-top">
-          <div className="header-left">
             <div className="logo">
               <span className="logo-text">Often Shopping</span>
-            </div>
-          </div>
         </div>
-
-       
       
     <nav className="navigation">
       {/* Left-side navigation links */}
@@ -73,7 +68,7 @@ export default function Home() {
 
 
       </header>
-
+    <div className="container">
       {/* Hero Section */}
       <section className="hero" style={{ backgroundImage: `url(${heroSlides[current].bg})` }}>
         <div className="hero-content glass">
@@ -189,6 +184,7 @@ export default function Home() {
 
         </section>
       </div>
+    </div>
     </div>
   );
 }

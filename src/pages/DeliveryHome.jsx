@@ -3,9 +3,11 @@ import DeliveryPersonNavbar from './DeliveryPersonNavbar'
 
 export default function DeliveryHome() {
   return (
-    <div>
-        <DeliveryPersonNavbar/>
+    <>
+      <DeliveryPersonNavbar/>
+      <div className="container">
         <h3>DeliveryHome</h3>
-    </div>
+      </div>
+    </>
   )
 }

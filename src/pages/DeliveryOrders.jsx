@@ -121,73 +121,74 @@ export default function DeliveryPerson() {
   if (loading) return <div>Loading delivery orders...</div>;
 
   return (
-    
-    <div>
+    <>
       <DeliveryPersonNavbar/>
-      <h2>Delivery Products</h2>
-      <button><Link to="/delivery_person_change_pass">Reset Password</Link></button>
-      {orders.length === 0 ? (
-        <p>No ordered products found.</p>
-      ) : (
-        <ul>
-          {orders.map((order, index) => (
-            <li
-              key={index}
-              style={{
-                marginBottom: '2rem',
-                borderBottom: '1px solid #ccc',
-                paddingBottom: '1rem'
-              }}
-            >
-              <img
-                src={order.productImage?.startsWith("http") ? order.productImage : `data:image/jpeg;base64,${order.productImage}`}
-                alt={order.productName}
-                width="120"
-              />
-              <p><strong>Name:</strong> {order.productName}</p>
-              <p><strong>Price:</strong> ₹{order.totalAmount}</p>
-              <p><strong>Quantity Ordered:</strong> {order.quantityOrdered}</p>
-              <p><strong>Order ID:</strong> {order.orderId}</p>
-              <p><strong>Order Date:</strong> {new Date(order.orderDate).toLocaleString()}</p>
-              {order.address && (
-                <>
-                  <p><strong>Phone Number:</strong> {order.address.phone}</p>
-                  <p><strong>Delivery Address:</strong> {[order.address.street, order.address.city, order.address.state, order.address.pincode].filter(Boolean).join(', ')}</p>
-                </>
-              )}
-
-              <p><strong>Status:</strong> {order.status}</p>
-
-              <button
-                onClick={() => handleOutForDelivery(order.orderId)}
+      <div className="container">
+        <h2>Delivery Products</h2>
+        <button><Link to="/delivery_person_change_pass">Reset Password</Link></button>
+        {orders.length === 0 ? (
+          <p>No ordered products found.</p>
+        ) : (
+          <ul>
+            {orders.map((order, index) => (
+              <li
+                key={index}
+                style={{
+                  marginBottom: '2rem',
+                  borderBottom: '1px solid #ccc',
+                  paddingBottom: '1rem'
+                }}
               >
-                OUT FOR DELIVERY
-              </button>
+                <img
+                  src={order.productImage?.startsWith("http") ? order.productImage : `data:image/jpeg;base64,${order.productImage}`}
+                  alt={order.productName}
+                  width="120"
+                />
+                <p><strong>Name:</strong> {order.productName}</p>
+                <p><strong>Price:</strong> ₹{order.totalAmount}</p>
+                <p><strong>Quantity Ordered:</strong> {order.quantityOrdered}</p>
+                <p><strong>Order ID:</strong> {order.orderId}</p>
+                <p><strong>Order Date:</strong> {new Date(order.orderDate).toLocaleString()}</p>
+                {order.address && (
+                  <>
+                    <p><strong>Phone Number:</strong> {order.address.phone}</p>
+                    <p><strong>Delivery Address:</strong> {[order.address.street, order.address.city, order.address.state, order.address.pincode].filter(Boolean).join(', ')}</p>
+                  </>
+                )}
 
-              <button
-                onClick={() => handleGenerateOtp(order.orderId)}
-                disabled={order.status !== "Out for Delivery" || buttonDisabled[order.orderId + "_otp"]}
-              >
-                SEND OTP
-              </button>
+                <p><strong>Status:</strong> {order.status}</p>
 
-              <button
-                onClick={() => handleVerifyOtp(order.orderId)}
-                disabled={order.status !== "OTP Sent" || buttonDisabled[order.orderId + "_verify"]}
-              >
-                VERIFY OTP
-              </button>
+                <button
+                  onClick={() => handleOutForDelivery(order.orderId)}
+                >
+                  OUT FOR DELIVERY
+                </button>
 
-              <button
-                onClick={() => handleDelivered(order.orderId)}
-                disabled={order.status !== "Out for Delivery" || buttonDisabled[order.orderId + "_delivered"]}
-              >
-                DELIVERED
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+                <button
+                  onClick={() => handleGenerateOtp(order.orderId)}
+                  disabled={order.status !== "Out for Delivery" || buttonDisabled[order.orderId + "_otp"]}
+                >
+                  SEND OTP
+                </button>
+
+                <button
+                  onClick={() => handleVerifyOtp(order.orderId)}
+                  disabled={order.status !== "OTP Sent" || buttonDisabled[order.orderId + "_verify"]}
+                >
+                  VERIFY OTP
+                </button>
+
+                <button
+                  onClick={() => handleDelivered(order.orderId)}
+                  disabled={order.status !== "Out for Delivery" || buttonDisabled[order.orderId + "_delivered"]}
+                >
+                  DELIVERED
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </>
   );
 }
