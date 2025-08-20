@@ -55,22 +55,8 @@ Before running the frontend, make sure you have installed:
 
 ---
 
-## 🚀 Quick Start  
+## 📞 Contact  
+For any questions or suggestions, feel free to reach out:  
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/OftenShopping-Frontend.git
-cd OftenShopping-Frontend
-
-# Install dependencies
-npm install
-# or
-yarn install
-
-# Start the development server
-npm start
-```
-## 🎯 Conclusion
-The E-Commerce Frontend provides a responsive and intuitive interface for the backend system, built with React.js, HTML5, and CSS3.
-It ensures seamless communication with backend APIs, offering product browsing, cart management, and delivery tracking.
-The clean architecture makes it scalable for future enhancements such as payment gateway integration, advanced filtering, AI-driven recommendations, and PWA support.
+- **Email:** bhuvaneshb546@gmail.com
+- **LinkedIn:** [Bhuvanesh KR](https://www.linkedin.com/in/bhuvanesh-kr/)  
