@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import qs from 'qs';
 import CustomerNavbar from './CustomerNavbar';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import '../style/ViewOrder.css'
 export default function ViewOrders() {
   const customerId = localStorage.getItem("id");
   const [orders, setOrders] = useState([]);
@@ -14,10 +15,9 @@ export default function ViewOrders() {
         try {
           const ordersRes = await axios.get("http://localhost:8080/listOfOrders", {
             params: { id: customerId }
-            
-          });console.log(ordersRes);
+          });
+          
           const rawOrders = ordersRes.data || [];
-
           const allProductIds = rawOrders
             .flatMap(order => order.items || [])
             .map(item => item.productId);
@@ -84,7 +84,7 @@ export default function ViewOrders() {
 
   if (loading) return <div>Loading orders...</div>;
   if (!orders.length) return <div>No orders found!</div>;
-  console.log("Order:", orders);
+
   return (
     <>
       <CustomerNavbar />
@@ -92,42 +92,52 @@ export default function ViewOrders() {
         <h2>Your Orders</h2>
         {orders.map((order, index) => (
           <div className="order-card" key={index}>
-            <h3>Order #{index + 1}</h3>
-            <div className="order-info">
-              <p><strong>Order Time:</strong> {new Date(order.ordertime).toLocaleString()}</p>
-              <p><strong>Payment ID:</strong> {order.paymentId || "Cash On Delivery"}</p>
-              <p><strong>Total Amount:</strong> ₹{order.totAmount?.toFixed(2)}</p>
-              <p><strong>Order Status:</strong> {order.status || "-"}</p>
-              {order.address && (
-                <p><strong>Address:</strong> {[order.address.street, order.address.city, order.address.state, order.address.pincode].filter(Boolean).join(', ')}</p>
-              )}
+            <div className="order-header">
+              <h3>Order #{order.id}</h3>
+              <p className="order-status">{order.status || "-"}</p>
             </div>
-
-            <h4>Items:</h4>
-            {order.items.length ? (
-              <div className="items-grid">
-                {order.items.map((item, i) => (
-                  <div className="item-card" key={i}>
-                    <img src={item.image} alt={item.name} className="item-image" />
-                    <div className="item-details">
-                      <p className="item-name">Name: {item.name}</p>
-                      {item.brand && <p><strong>Brand: </strong>{item.brand}</p>}
-                      <p><strong>Quantity: </strong>{item.quantity}</p>
-                      <div className="price-section">
-                        <span>₹{item.price.toFixed(2)}</span>
-                      </div>
-                        <Link to= '/track_order' state={{status : order.status}}>Track Order</Link>
-                        {order.status === "DELIVERED" && (
-                          <Link to="/add_review" state={{ productId: item.productId }}>ADD REVIEW</Link>
-                        )}
-                    </div>
-                  
-                    </div> 
-                ))}
+            
+            <div className="order-details">
+              <div className="order-info">
+                <p><strong>Order Date:</strong> {new Date(order.ordertime).toLocaleString()}</p>
+                <p><strong>Payment ID:</strong> {order.paymentId || "Cash On Delivery"}</p>
+                <p><strong>Total Amount:</strong> ₹{order.totAmount?.toFixed(2)}</p>
+                {order.address && (
+                  <p><strong>Address:</strong> {[order.address.street, order.address.city, order.address.state, order.address.pincode].filter(Boolean).join(', ')}</p>
+                )}
               </div>
-            ) : (
-              <p>No items found for this order.</p>
-            )}
+              
+              <div className="order-items">
+                <h4>Order Items</h4>
+                {order.items.length ? (
+                  <div className="items-list">
+                    {order.items.map((item, i) => (
+                      <div className="item-card" key={i}>
+                        <img src={item.image} alt={item.name} className="item-image" />
+                        <div className="item-info">
+                          <p className="item-name">{item.name}</p>
+                          {item.brand && <p><strong>Brand:</strong> {item.brand}</p>}
+                          <p><strong>Quantity:</strong> {item.quantity}</p>
+                          <p><strong>Price:</strong> ₹{item.price.toFixed(2)}</p>
+                        </div>
+                        <div className="item-actions">
+                          <Link to='/track_order' state={{status: order.status}} className="action-btn track-btn">
+                            Track Order
+                          </Link>
+                          {order.status === "DELIVERED" && (
+                            <Link to="/add_review" state={{ productId: item.productId }} className="action-btn review-btn">
+                              Add Review
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>No items found for this order.</p>
+                )}
+              </div>
+            </div>
           </div>
         ))}
       </div>

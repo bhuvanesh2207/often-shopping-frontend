@@ -73,7 +73,7 @@ export default function AdminSignup() {
               <input
                 type="text"
                 id="name"
-                name="name"
+                name="businessName"
                 ref={nameRef}
                 required
                 value={formData.businessName}

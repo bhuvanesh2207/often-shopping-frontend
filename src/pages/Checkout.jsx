@@ -1,62 +1,90 @@
-import React, { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
-import CustomerNavbar from './CustomerNavbar';
-import '../style/Form.css';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import CustomerNavbar from "./CustomerNavbar";
+import "../style/Form.css";
 
 export default function Checkout() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Read total and items from location state or fallback to localStorage!
-  const totalAmount = Number(location.state?.total) || 0;
-  const items = location.state?.items || JSON.parse(localStorage.getItem('cart') || '[]');
+  // Load cart from localStorage
+  const savedItems = JSON.parse(localStorage.getItem("cart") || "[]");
+  const items = location.state?.items || savedItems;
+
+  // Calculate total from cart if not provided
+  const totalAmount =
+    location.state?.total ||
+    savedItems.reduce(
+      (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
+      0
+    );
 
   const [paymentMethod, setPaymentMethod] = useState("");
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [addressLoading, setAddressLoading] = useState(true);
 
-  const customerId = localStorage.getItem('id');
+  const customerId = localStorage.getItem("id");
 
+  // Fetch addresses
   useEffect(() => {
-    if (customerId) {
-      setAddressLoading(true);
-      axios.get('http://localhost:8080/getAddress', {
-        params: { customerId }
-      })
-        .then(res => {
-          setAddresses(res.data || []);
-          if (res.data.length > 0) {
-            setSelectedAddressId(res.data[0].id);
+    if (!customerId) return;
+
+    setAddressLoading(true);
+
+    axios
+      .get("http://localhost:8080/getAddress", { params: { customerId } })
+      .then((res) => {
+        const data = res.data || [];
+        setAddresses(data);
+
+        const newAddressId = location.state?.newAddressId;
+
+        if (data.length > 0) {
+          if (newAddressId && data.some((addr) => addr.id === newAddressId)) {
+            setSelectedAddressId(newAddressId); // auto-select newly added
+          } else if (
+            !selectedAddressId ||
+            !data.some((addr) => addr.id === selectedAddressId)
+          ) {
+            setSelectedAddressId(data[0].id); // fallback: first address
           }
-        })
-        .catch(() => alert("Failed to fetch addresses!"))
-        .finally(() => setAddressLoading(false));
-    }
-  }, [customerId]);
+        }
 
-  // Remove address logic
+        if (!paymentMethod && data.length > 0) {
+          setPaymentMethod("Cash On Delivery");
+        }
+      })
+      .catch(() => alert("Failed to fetch addresses!"))
+      .finally(() => setAddressLoading(false));
+  }, [customerId, location]);
+
+  // Remove address
   const handleRemoveAddress = (id) => {
-    if (!window.confirm("Are you sure you want to remove this address?")) return;
+    if (!window.confirm("Are you sure you want to remove this address?"))
+      return;
 
-    axios.get('http://localhost:8080/removeAddress', { params: { id } })
+    axios
+      .get("http://localhost:8080/removeAddress", { params: { id } })
       .then(() => {
-        setAddresses(prev => {
-          const updated = prev.filter(addr => addr.id !== id);
-          setSelectedAddressId(updated.length > 0 ? updated[0].id : "");
+        setAddresses((prev) => {
+          const updated = prev.filter((addr) => addr.id !== id);
+          if (id === selectedAddressId) {
+            setSelectedAddressId(updated.length > 0 ? updated[0].id : "");
+          }
           return updated;
         });
       })
-      .catch(() => alert('Failed to remove address.'));
+      .catch(() => alert("Failed to remove address."));
   };
 
-  // Order creation and cart clear
+  // Create order
   const createOrder = async (paymentId) => {
     const orderPayload = {
       customerId,
       address: selectedAddressId,
-      items: items.map(item => ({
+      items: items.map((item) => ({
         productId: item.productId || null,
         quantity: item.quantity || 1,
       })),
@@ -67,10 +95,12 @@ export default function Checkout() {
 
     try {
       await axios.post("http://localhost:8080/createOrder", orderPayload, {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
-      // Remove cart ONLY after successful order!
-      localStorage.removeItem('cart');
+
+      // Clear cart
+      localStorage.removeItem("cart");
+
       alert("Order placed successfully!");
       navigate("/confirm_order");
     } catch (err) {
@@ -79,22 +109,12 @@ export default function Checkout() {
     }
   };
 
-  // Payment handler for COD and Online Payment
+  // Handle payment
   const handlePayment = async () => {
-    if (!selectedAddressId) {
-      alert("Please select an address.");
-      return;
-    }
-    if (!paymentMethod) {
-      alert("Please select a payment method.");
-      return;
-    }
-
-    // Cart empty check
-    if (!Array.isArray(items) || items.length === 0) {
-      alert("Cart is empty! Please add products before checkout.");
-      return;
-    }
+    if (!selectedAddressId) return alert("Please select an address.");
+    if (!paymentMethod) return alert("Please select a payment method.");
+    if (!Array.isArray(items) || items.length === 0)
+      return alert("Cart is empty!");
 
     if (paymentMethod === "Cash On Delivery") {
       await createOrder(null);
@@ -107,10 +127,7 @@ export default function Checkout() {
         );
         const order = res.data;
 
-        if (!window.Razorpay) {
-          alert("Razorpay SDK not loaded.");
-          return;
-        }
+        if (!window.Razorpay) return alert("Razorpay SDK not loaded.");
 
         const options = {
           key: "rzp_test_dKctbPiOE97dPE",
@@ -120,12 +137,9 @@ export default function Checkout() {
           description: "Payment",
           order_id: order.id,
           handler: async function (response) {
-            // Payment successful, now create order, delete cart after
             await createOrder(response.razorpay_payment_id);
           },
-          prefill: {
-            email: localStorage.getItem('email') || '',
-          },
+          prefill: { email: localStorage.getItem("email") || "" },
           theme: { color: "#3399cc" },
         };
 
@@ -138,18 +152,15 @@ export default function Checkout() {
     }
   };
 
-  const addressRadioRef = useRef(null);
-  useEffect(() => {
-    if (addressRadioRef.current) addressRadioRef.current.focus();
-  }, [addresses]);
-
   return (
     <>
-      <CustomerNavbar/>
+      <CustomerNavbar />
       <div className="container">
         <h1>Checkout Page</h1>
         <h2>Total Amount: ₹{totalAmount.toFixed(2)}</h2>
-        <Link to="/add_address"><button>Add Address</button></Link>
+        <Link to="/add_address">
+          <button>Add Address</button>
+        </Link>
 
         <h3>Select Shipping Address</h3>
         {addressLoading ? (
@@ -158,19 +169,35 @@ export default function Checkout() {
           <p>No saved addresses.</p>
         ) : (
           <div>
-            {addresses.map(addr => (
+            {addresses.map((addr) => (
               <div
                 key={addr.id}
-                className={`address-card ${selectedAddressId === addr.id ? 'selected' : ''}`}
+                className={`address-card ${
+                  selectedAddressId === addr.id ? "selected" : ""
+                }`}
                 onClick={() => setSelectedAddressId(addr.id)}
-                style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0', cursor: 'pointer' }}
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "10px",
+                  margin: "10px 0",
+                  cursor: "pointer",
+                }}
               >
-                <div><b>{addr.fullName}</b></div>
-                <div>{addr.street}, {addr.city}</div>
-                <div>{addr.state} - {addr.pincode}</div>
+                <div>
+                  <b>{addr.fullName}</b>
+                </div>
+                <div>
+                  {addr.street}, {addr.city}
+                </div>
+                <div>
+                  {addr.state} - {addr.pincode}
+                </div>
                 <div>Phone: {addr.phone}</div>
                 <button
-                  onClick={e => { e.stopPropagation(); handleRemoveAddress(addr.id); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveAddress(addr.id);
+                  }}
                   disabled={addressLoading}
                 >
                   Remove
@@ -180,7 +207,13 @@ export default function Checkout() {
           </div>
         )}
 
-        <form onSubmit={(e) => { e.preventDefault(); handlePayment(); }} className="auth-form">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handlePayment();
+          }}
+          className="auth-form"
+        >
           <h3>Payment Method</h3>
           <label>
             <input
@@ -188,9 +221,9 @@ export default function Checkout() {
               name="payment"
               value="Cash On Delivery"
               checked={paymentMethod === "Cash On Delivery"}
-              onChange={e => setPaymentMethod(e.target.value)}
-              ref={addressRadioRef}
-            /> Cash On Delivery
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            />{" "}
+            Cash On Delivery
           </label>
           <br />
           <label>
@@ -199,17 +232,23 @@ export default function Checkout() {
               name="payment"
               value="Online Payment"
               checked={paymentMethod === "Online Payment"}
-              onChange={e => setPaymentMethod(e.target.value)}
-            /> Online Payment
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            />{" "}
+            Online Payment
           </label>
           <br />
-          <button type="submit" disabled={totalAmount === 0 || addresses.length === 0}>
+          <button
+            type="submit"
+            disabled={totalAmount === 0 || !selectedAddressId}
+          >
             Place Order
           </button>
         </form>
 
         <br />
-        <Link to="/view_cart_page"><button>Back to Cart</button></Link>
+        <Link to="/view_cart_page">
+          <button>Back to Cart</button>
+        </Link>
       </div>
     </>
   );

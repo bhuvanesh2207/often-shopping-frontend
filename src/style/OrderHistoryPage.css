@@ -1,0 +1,85 @@
+.order-history-container {
+  max-width: 1800px;  /* Increased from 1500px */
+  margin: 0 auto;
+  padding: 30px;  /* Increased padding */
+  font-family: Arial, sans-serif;
+  min-height: 100vh;  /* Added minimum height to fill viewport */
+}
+
+.order-history-container h3 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+.order-card {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  border-radius: 8px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.order-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgb(250, 138, 0);
+}
+
+.order-details {
+  flex: 1;
+}
+
+.order-details p {
+  margin: 10px 0;
+  color: #555;
+  font-size: 16px;
+}
+
+.order-details p strong {
+  color: #333;
+  min-width: 120px;
+  display: inline-block;
+}
+
+.order-image-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 30px;
+  width: 220px;
+}
+
+.order-image {
+  width: 200px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+@media (max-width: 768px) {
+  .order-card {
+    flex-direction: column;
+  }
+  
+  .order-image-section {
+    margin-left: 0;
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  .order-image {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .view-more-btn {
+    max-width: 300px;
+  }
+}

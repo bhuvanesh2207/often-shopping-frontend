@@ -11,6 +11,7 @@ export default function CustomerNavbar({ children }) {
           <Link to="/customer_page">Shopp</Link>
           <Link to="/view_orders">My Orders</Link>
           <Link to="/logout">Logout</Link>
+          <Link to="/order_history">Order History</Link>
         </div>
         <Link to="/customer_profile_page" className="profile-link">
           <button className="profile-button">

@@ -10,7 +10,7 @@ export default function Signin() {
   const emailRef = useRef(null);
   useEffect(() => {
     if (emailRef.current) emailRef.current.focus();
-  }, []);
+  }, []); 
 
   const handleSubmit = (e) => {
     e.preventDefault();

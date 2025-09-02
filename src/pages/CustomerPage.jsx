@@ -12,8 +12,8 @@ export default function Customer() {
   const [avgRatings, setAvgRatings] = useState({});
   const [query, setQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(true);
-  const [hoveredProductId, setHoveredProductId] = useState(null); // ✅ NEW STATE
-  const [alreadyHovered, setAlreadyHovered] = useState({}); // ✅ NEW STATE
+  const [hoveredProductId, setHoveredProductId] = useState(null); 
+  const [alreadyHovered, setAlreadyHovered] = useState({}); 
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -173,9 +173,11 @@ export default function Customer() {
                 <p><strong>Description:</strong> {p.description}</p>
                 <p><strong>Ratings:</strong> ⭐ {avgRatings[p.id] || '0.0'}</p>
                 <div className="price-section">
-                  <div className="discount-badge">-{p.discount}%</div>
-                  <div className="final-price">₹{(p.finalPrice)}</div>
-                  <div className="original-price">List Price: <s>₹{(p.price)}</s></div>
+                  <div className="price-line-1">
+                    <div className="discount-badge">-{p.discount}%</div>
+                    <div className="final-price">₹{p.finalPrice}</div>
+                  </div>
+                  <div className="original-price">List Price: <s>₹{p.price}</s></div>
                 </div>
 
                 <div className="action-row">
@@ -187,8 +189,10 @@ export default function Customer() {
                     value={quantities[p.id] || 1}
                     onChange={(e) => handleQuantityChange(p.id, e.target.value)}
                   />
+                  <div className="Buttons">
                   <button onClick={() => handelReview(p.id)}>Reviews</button>
                   <button onClick={() => handleCart(p)}>Add to Cart</button>
+                  </div>
                 </div>
               </div>
             </div>
